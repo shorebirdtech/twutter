@@ -1,4 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:twutter/src/view/avatar.dart';
+import 'package:twutter/src/view/config.dart';
+import 'model/model.dart';
+import 'view/timeline.dart';
 
 class RootNavigation extends StatefulWidget {
   const RootNavigation({super.key});
@@ -7,74 +11,105 @@ class RootNavigation extends StatefulWidget {
   State<RootNavigation> createState() => _RootNavigationState();
 }
 
+class Screen {
+  final String title;
+  final Widget? appBarTitleOverride;
+  final Widget body;
+  final Widget floatingActionButton;
+  final Icon navigationIcon;
+
+  const Screen({
+    required this.title,
+    this.appBarTitleOverride,
+    required this.body,
+    required this.floatingActionButton,
+    required this.navigationIcon,
+  });
+
+  Widget get appBarTitle => appBarTitleOverride ?? Text(title);
+}
+
+class _Placeholder extends StatelessWidget {
+  final String title;
+
+  const _Placeholder(this.title);
+
+  @override
+  Widget build(BuildContext context) {
+    return Center(
+      child: Text(title,
+          style: const TextStyle(fontSize: 30, fontWeight: FontWeight.bold)),
+    );
+  }
+}
+
 class _RootNavigationState extends State<RootNavigation> {
-  int _selectedIndex = 0;
-  static const TextStyle optionStyle =
-      TextStyle(fontSize: 30, fontWeight: FontWeight.bold);
-  static const List<Widget> _widgetOptions = <Widget>[
-    Text(
-      'Home',
-      style: optionStyle,
+  int _selectedScreenIndex = 0;
+
+  static FloatingActionButton composeButton = FloatingActionButton(
+    onPressed: () {},
+    tooltip: 'Compose',
+    child: const Icon(Icons.add),
+  );
+
+  static final List<Screen> _screens = <Screen>[
+    Screen(
+      title: "Timeline",
+      body: const Timeline(),
+      appBarTitleOverride: const Icon(Icons.flutter_dash),
+      floatingActionButton: composeButton,
+      navigationIcon: const Icon(Icons.home),
     ),
-    Text(
-      'Search',
-      style: optionStyle,
+    Screen(
+      title: "Search",
+      body: const _Placeholder("Search"),
+      floatingActionButton: composeButton,
+      navigationIcon: const Icon(Icons.search),
     ),
-    Text(
-      'Notifications',
-      style: optionStyle,
+    Screen(
+      title: "Notifications",
+      body: const _Placeholder("Notifications"),
+      floatingActionButton: composeButton,
+      navigationIcon: const Icon(Icons.notifications),
     ),
-    Text(
-      'Messages',
-      style: optionStyle,
+    Screen(
+      title: "Messages",
+      body: const _Placeholder("Messages"),
+      floatingActionButton: composeButton,
+      navigationIcon: const Icon(Icons.mail),
     ),
   ];
 
   void _onItemTapped(int index) {
     setState(() {
-      _selectedIndex = index;
+      _selectedScreenIndex = index;
     });
   }
+
+  Screen get selectedScreen => _screens[_selectedScreenIndex];
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        leading: CircleAvatar(
-          backgroundColor: Colors.brown.shade800,
-          child: const Text('ES'),
-        ),
-        title: const Icon(Icons.flutter_dash),
+        toolbarHeight: 40,
+        // FIXME: This Padding is a hack to shrink the CircleAvatar.
+        leading: Padding(
+          padding: const EdgeInsets.fromLTRB(
+              LayoutConfig.timelineHorizontalPadding, 0, 20, 0),
+          child: AvatarView(user: model.me!),
+        ), // Decide what logged out behavior is?
+        title: selectedScreen.appBarTitle,
         centerTitle: true,
       ),
-      body: Center(
-        child: _widgetOptions.elementAt(_selectedIndex),
-      ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () {},
-        tooltip: 'Compose',
-        child: const Icon(Icons.add),
-      ),
+      body: selectedScreen.body,
+      floatingActionButton: selectedScreen.floatingActionButton,
       bottomNavigationBar: BottomNavigationBar(
-        items: const <BottomNavigationBarItem>[
-          BottomNavigationBarItem(
-            icon: Icon(Icons.home),
-            label: 'Home',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.search),
-            label: 'Search',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.notifications),
-            label: 'Notifications',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.mail),
-            label: 'Messages',
-          ),
-        ],
-        currentIndex: _selectedIndex,
+        items: _screens
+            .map((e) =>
+                BottomNavigationBarItem(icon: e.navigationIcon, label: e.title))
+            .toList(),
+        currentIndex: _selectedScreenIndex,
         selectedItemColor: Colors.amber[800],
         onTap: _onItemTapped,
       ),
