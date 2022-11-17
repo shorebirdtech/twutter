@@ -16,7 +16,7 @@ class Screen {
   final Widget? appBarTitleOverride;
   final Widget body;
   final Widget floatingActionButton;
-  final Icon navigationIcon;
+  final Widget navigationIcon;
 
   const Screen({
     required this.title,
@@ -71,36 +71,40 @@ class _ComposeMessageFloatingActionButton extends StatelessWidget {
   }
 }
 
+class _UnreadBadgePainter extends CustomPainter {
+  _UnreadBadgePainter();
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    final Paint paint = Paint()
+      ..style = PaintingStyle.fill
+      ..color = Colors.blue;
+    canvas.drawCircle(
+        Offset(size.width * 7 / 8, size.height * 1 / 8), size.width / 8, paint);
+  }
+
+  @override
+  bool shouldRepaint(CustomPainter oldDelegate) => false;
+}
+
+class BadgedIcon extends StatelessWidget {
+  final IconData iconData;
+  final bool hasBadge;
+
+  const BadgedIcon(this.iconData, {super.key, required this.hasBadge});
+
+  @override
+  Widget build(BuildContext context) {
+    if (hasBadge) {
+      return CustomPaint(
+          foregroundPainter: _UnreadBadgePainter(), child: Icon(iconData));
+    }
+    return Icon(iconData);
+  }
+}
+
 class _RootNavigationState extends State<RootNavigation> {
   int _selectedScreenIndex = 0;
-
-  final List<Screen> _screens = const <Screen>[
-    Screen(
-      title: "Timeline",
-      body: Timeline(),
-      appBarTitleOverride: Icon(Icons.flutter_dash),
-      floatingActionButton: _ComposeFloatingActionButton(),
-      navigationIcon: Icon(Icons.home),
-    ),
-    Screen(
-      title: "Search",
-      body: _Placeholder("Search"),
-      floatingActionButton: _ComposeFloatingActionButton(),
-      navigationIcon: Icon(Icons.search),
-    ),
-    Screen(
-      title: "Notifications",
-      body: _Placeholder("Notifications"),
-      floatingActionButton: _ComposeFloatingActionButton(),
-      navigationIcon: Icon(Icons.notifications),
-    ),
-    Screen(
-      title: "Messages",
-      body: _Placeholder("Messages"),
-      floatingActionButton: _ComposeMessageFloatingActionButton(),
-      navigationIcon: Icon(Icons.mail),
-    ),
-  ];
 
   void _onItemTapped(int index) {
     setState(() {
@@ -108,10 +112,39 @@ class _RootNavigationState extends State<RootNavigation> {
     });
   }
 
-  Screen get selectedScreen => _screens[_selectedScreenIndex];
-
   @override
   Widget build(BuildContext context) {
+    final List<Screen> screens = <Screen>[
+      Screen(
+        title: "Timeline",
+        body: const Timeline(),
+        appBarTitleOverride: const Icon(Icons.flutter_dash),
+        floatingActionButton: const _ComposeFloatingActionButton(),
+        navigationIcon: BadgedIcon(Icons.home, hasBadge: model.me!.hasNewFlaps),
+      ),
+      const Screen(
+        title: "Search",
+        body: _Placeholder("Search"),
+        floatingActionButton: _ComposeFloatingActionButton(),
+        navigationIcon: Icon(Icons.search),
+      ),
+      const Screen(
+        title: "Notifications",
+        body: _Placeholder("Notifications"),
+        floatingActionButton: _ComposeFloatingActionButton(),
+        navigationIcon: Icon(Icons.notifications),
+      ),
+      Screen(
+        title: "Messages",
+        body: const _Placeholder("Messages"),
+        floatingActionButton: const _ComposeMessageFloatingActionButton(),
+        navigationIcon:
+            BadgedIcon(Icons.mail, hasBadge: model.me!.hasNewMessages),
+      ),
+    ];
+
+    var selectedScreen = screens[_selectedScreenIndex];
+
     return Scaffold(
       appBar: AppBar(
         toolbarHeight: LayoutConfig.appBarHeight,
@@ -127,7 +160,7 @@ class _RootNavigationState extends State<RootNavigation> {
       body: selectedScreen.body,
       floatingActionButton: selectedScreen.floatingActionButton,
       bottomNavigationBar: BottomNavigationBar(
-        items: _screens
+        items: screens
             .map((e) =>
                 BottomNavigationBarItem(icon: e.navigationIcon, label: e.title))
             .toList(),

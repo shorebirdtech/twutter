@@ -8,6 +8,10 @@ class User {
   // Good enough hack for now.
   String get initials => displayName.split(' ').map((s) => s[0]).join();
 
+  // FIXME: Not sure where these go?
+  final bool hasNewFlaps = false;
+  final bool hasNewMessages = false;
+
   const User({
     required this.id,
     required this.displayName,
