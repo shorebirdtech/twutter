@@ -7,4 +7,7 @@ class LayoutConfig {
   static const double avatarRightPadding = 4;
   static const double avatarRadius =
       (avatarColumnWidth - avatarRightPadding) / 2;
+
+  // Not sure this should go here.
+  static const double checkmarkSize = 12;
 }

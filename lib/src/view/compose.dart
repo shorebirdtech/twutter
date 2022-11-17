@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:twutter/src/model/flap.dart';
 
 import 'config.dart';
+import 'button.dart';
 import '../model/model.dart';
 import '../gen/client.dart';
 
@@ -35,7 +36,7 @@ class _ComposeDialogState extends State<ComposeDialog> {
                 .pop()), // Decide what logged out behavior is?
         title: const Text("Compose"), // Drafts button
         actions: [
-          ElevatedButton(
+          FlapButton(
             onPressed: () {
               var draft = DraftFlap.compose(
                 authorId: model.me!.id,

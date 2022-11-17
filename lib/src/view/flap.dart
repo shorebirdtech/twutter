@@ -3,6 +3,7 @@ import 'package:twutter/src/view/avatar.dart';
 import '../model/flap.dart';
 import 'config.dart';
 import 'theme.dart';
+import 'user.dart';
 
 class FlapControl extends StatelessWidget {
   static const double controlsSize = 12;
@@ -39,7 +40,6 @@ class FlapControl extends StatelessWidget {
 class FlapView extends StatelessWidget {
   final Flap flap;
 
-  static const double checkmarkSize = 12;
 
   const FlapView({super.key, required this.flap});
 
@@ -61,17 +61,7 @@ class FlapView extends StatelessWidget {
     var authorLine = Row(
       mainAxisAlignment: MainAxisAlignment.start,
       children: [
-        Text(
-          flap.author.displayName,
-          style: const TextStyle(fontWeight: FontWeight.bold),
-        ),
-        if (flap.author.verified) const Text(' '),
-        if (flap.author.verified)
-          const Icon(
-            Icons.check_circle,
-            size: checkmarkSize,
-            color: Colors.blue,
-          ),
+        ...flap.author.verifiedName,
         const Text(' '),
         Text(
           flap.author.handle,
@@ -131,7 +121,7 @@ class FlapView extends StatelessWidget {
                       LayoutConfig.avatarRightPadding,
                   child: Align(
                     alignment: Alignment.topRight,
-                    child: Icon(Icons.repeat, size: checkmarkSize),
+                    child: Icon(Icons.repeat, size: LayoutConfig.checkmarkSize),
                   ),
                 ),
                 const SizedBox(width: LayoutConfig.avatarRightPadding),

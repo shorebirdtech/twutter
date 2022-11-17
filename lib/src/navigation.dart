@@ -3,6 +3,7 @@ import 'package:twutter/src/view/avatar.dart';
 import 'package:twutter/src/view/config.dart';
 import 'model/model.dart';
 import 'view/timeline.dart';
+import 'view/notifications.dart';
 
 class RootNavigation extends StatefulWidget {
   const RootNavigation({super.key});
@@ -122,15 +123,15 @@ class _RootNavigationState extends State<RootNavigation> {
         floatingActionButton: const _ComposeFloatingActionButton(),
         navigationIcon: BadgedIcon(Icons.home, hasBadge: model.me!.hasNewFlaps),
       ),
-      const Screen(
-        title: "Search",
-        body: _Placeholder("Search"),
-        floatingActionButton: _ComposeFloatingActionButton(),
-        navigationIcon: Icon(Icons.search),
-      ),
+      // const Screen(
+      //   title: "Search",
+      //   body: _Placeholder("Search"),
+      //   floatingActionButton: _ComposeFloatingActionButton(),
+      //   navigationIcon: Icon(Icons.search),
+      // ),
       const Screen(
         title: "Notifications",
-        body: _Placeholder("Notifications"),
+        body: Notifications(),
         floatingActionButton: _ComposeFloatingActionButton(),
         navigationIcon: Icon(Icons.notifications),
       ),

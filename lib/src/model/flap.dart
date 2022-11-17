@@ -63,6 +63,7 @@ class Flap {
   User get author => model.userById(authorId);
 
   bool get isReflap => originalFlapId != null;
+  bool get isReply => previousFlapId != null;
 
   // FIXME: Both of these are hacks to just test the UI.
   bool get wasReflappedByMe => reflapCount > 0;

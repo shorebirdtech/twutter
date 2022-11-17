@@ -1,5 +1,6 @@
 import 'user.dart';
 import 'flap.dart';
+import 'notification.dart';
 
 var _eric =
     const User(id: '0', displayName: 'Eric Seidel', handle: '@_eseidel');
@@ -105,7 +106,10 @@ class _DummyStoreBuilder {
 class DataStore {
   User? me;
   User userById(String id) => demoUsers.firstWhere((u) => u.id == id);
+  // FIXME: This is wrong, this needs to go to a FlapCache or something?
+  Flap flapById(String id) => latestFlaps.firstWhere((f) => f.id == id);
   List<Flap> latestFlaps = [];
+  List<NotificationGroup> notifications = [];
 }
 
 var model = _DummyStoreBuilder().build();
