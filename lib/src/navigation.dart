@@ -43,40 +43,62 @@ class _Placeholder extends StatelessWidget {
   }
 }
 
+class _ComposeFloatingActionButton extends StatelessWidget {
+  const _ComposeFloatingActionButton();
+
+  @override
+  Widget build(BuildContext context) {
+    return FloatingActionButton(
+      onPressed: () {
+        Navigator.of(context).pushNamed("/compose");
+      },
+      tooltip: 'Compose',
+      child: const Icon(Icons.add),
+    );
+  }
+}
+
+class _ComposeMessageFloatingActionButton extends StatelessWidget {
+  const _ComposeMessageFloatingActionButton();
+
+  @override
+  Widget build(BuildContext context) {
+    return FloatingActionButton(
+      onPressed: () {},
+      tooltip: 'Compose Message',
+      child: const Icon(Icons.mail),
+    );
+  }
+}
+
 class _RootNavigationState extends State<RootNavigation> {
   int _selectedScreenIndex = 0;
 
-  static FloatingActionButton composeButton = FloatingActionButton(
-    onPressed: () {},
-    tooltip: 'Compose',
-    child: const Icon(Icons.add),
-  );
-
-  static final List<Screen> _screens = <Screen>[
+  final List<Screen> _screens = const <Screen>[
     Screen(
       title: "Timeline",
-      body: const Timeline(),
-      appBarTitleOverride: const Icon(Icons.flutter_dash),
-      floatingActionButton: composeButton,
-      navigationIcon: const Icon(Icons.home),
+      body: Timeline(),
+      appBarTitleOverride: Icon(Icons.flutter_dash),
+      floatingActionButton: _ComposeFloatingActionButton(),
+      navigationIcon: Icon(Icons.home),
     ),
     Screen(
       title: "Search",
-      body: const _Placeholder("Search"),
-      floatingActionButton: composeButton,
-      navigationIcon: const Icon(Icons.search),
+      body: _Placeholder("Search"),
+      floatingActionButton: _ComposeFloatingActionButton(),
+      navigationIcon: Icon(Icons.search),
     ),
     Screen(
       title: "Notifications",
-      body: const _Placeholder("Notifications"),
-      floatingActionButton: composeButton,
-      navigationIcon: const Icon(Icons.notifications),
+      body: _Placeholder("Notifications"),
+      floatingActionButton: _ComposeFloatingActionButton(),
+      navigationIcon: Icon(Icons.notifications),
     ),
     Screen(
       title: "Messages",
-      body: const _Placeholder("Messages"),
-      floatingActionButton: composeButton,
-      navigationIcon: const Icon(Icons.mail),
+      body: _Placeholder("Messages"),
+      floatingActionButton: _ComposeMessageFloatingActionButton(),
+      navigationIcon: Icon(Icons.mail),
     ),
   ];
 
@@ -92,7 +114,7 @@ class _RootNavigationState extends State<RootNavigation> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        toolbarHeight: 40,
+        toolbarHeight: LayoutConfig.appBarHeight,
         // FIXME: This Padding is a hack to shrink the CircleAvatar.
         leading: Padding(
           padding: const EdgeInsets.fromLTRB(

@@ -9,20 +9,29 @@ class FlapControl extends StatelessWidget {
 
   final IconData iconData;
   final int? count;
-  final VoidCallback? onPressed;
+  final VoidCallback onPressed;
+  final bool highlighted;
 
-  const FlapControl(
-      {super.key, required this.iconData, this.count, this.onPressed});
+  const FlapControl({
+    super.key,
+    required this.iconData,
+    this.count,
+    required this.onPressed,
+    this.highlighted = false,
+  });
 
   @override
   Widget build(BuildContext context) {
-    return IconButton(
+    var leftAlignHack = const Text("      ");
+    return TextButton.icon(
       onPressed: onPressed,
       icon: Icon(
         iconData,
         size: controlsSize,
         color: TwutterTheme.backgroundIconColor(context),
       ),
+      // Alignment hack.
+      label: (count ?? 0) > 0 ? Text("$count") : leftAlignHack,
     );
   }
 }
@@ -77,10 +86,25 @@ class FlapView extends StatelessWidget {
     );
 
     var controls = Row(children: [
-      FlapControl(iconData: Icons.chat_bubble_outline, count: flap.replyCount),
-      FlapControl(iconData: Icons.repeat, count: flap.reflapCount),
-      FlapControl(iconData: Icons.favorite_border, count: flap.likeCount),
-      const FlapControl(iconData: Icons.share),
+      FlapControl(
+        iconData: Icons.chat_bubble_outline,
+        count: flap.replyCount,
+        // Replies never highlight.
+        onPressed: () => {},
+      ),
+      FlapControl(
+        iconData: Icons.repeat,
+        count: flap.reflapCount,
+        highlighted: flap.wasReflappedByMe,
+        onPressed: () => {},
+      ),
+      FlapControl(
+        iconData: Icons.favorite_border,
+        count: flap.likeCount,
+        highlighted: flap.wasLikedByMe,
+        onPressed: () => {},
+      ),
+      FlapControl(iconData: Icons.share, onPressed: () => {}),
     ]);
 
     // Retweet or not (can wrap)
@@ -96,27 +120,50 @@ class FlapView extends StatelessWidget {
     return Padding(
       padding: const EdgeInsets.symmetric(
           horizontal: LayoutConfig.timelineHorizontalPadding),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.start,
-        crossAxisAlignment: CrossAxisAlignment.start,
+      child: Column(
         children: [
-          SizedBox(
-            width: LayoutConfig.avatarColumnWidth,
-            child: AvatarView(
-              user: flap.author,
-              radius: LayoutConfig.avatarRadius,
-            ),
-          ),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
+          if (flap.isReflap)
+            Row(
+              mainAxisAlignment: MainAxisAlignment.start,
               children: [
-                authorLine,
-                Text(flap.content),
-                controls,
+                const SizedBox(
+                  width: LayoutConfig.avatarColumnWidth -
+                      LayoutConfig.avatarRightPadding,
+                  child: Align(
+                    alignment: Alignment.topRight,
+                    child: Icon(Icons.repeat, size: checkmarkSize),
+                  ),
+                ),
+                const SizedBox(width: LayoutConfig.avatarRightPadding),
+                Text(
+                  '${flap.author.displayName} Reflapped',
+                  style: TwutterTheme.backgroundText(context),
+                ),
               ],
             ),
-          )
+          Row(
+            mainAxisAlignment: MainAxisAlignment.start,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              SizedBox(
+                width: LayoutConfig.avatarColumnWidth,
+                child: AvatarView(
+                  user: flap.author,
+                  radius: LayoutConfig.avatarRadius,
+                ),
+              ),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    authorLine,
+                    Text(flap.content),
+                    controls,
+                  ],
+                ),
+              )
+            ],
+          ),
         ],
       ),
     );

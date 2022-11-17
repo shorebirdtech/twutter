@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../navigation.dart';
+import 'compose.dart';
 
 class TwutterApp extends StatelessWidget {
   const TwutterApp({super.key});
@@ -16,7 +17,11 @@ class TwutterApp extends StatelessWidget {
               backgroundColor: Colors.black,
             ),
       ),
-      home: const RootNavigation(),
+      initialRoute: '/',
+      routes: {
+        '/': (context) => const RootNavigation(),
+        '/compose': (context) => const ComposeDialog(),
+      },
     );
   }
 }

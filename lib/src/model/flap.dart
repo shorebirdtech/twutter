@@ -52,11 +52,21 @@ class Flap {
   final String content;
   final DateTime createdAt;
 
-  final int replyCount = 0;
-  final int reflapCount = 0;
-  final int likeCount = 0;
+  final List<String> replyIds = [];
+  final List<String> reflapIds = [];
+  final List<String> likeUserIds = [];
+
+  int get reflapCount => reflapIds.length;
+  int get replyCount => replyIds.length;
+  int get likeCount => likeUserIds.length;
 
   User get author => model.userById(authorId);
+
+  bool get isReflap => originalFlapId != null;
+
+  // FIXME: Both of these are hacks to just test the UI.
+  bool get wasReflappedByMe => reflapCount > 0;
+  bool get wasLikedByMe => likeCount > 0;
 
   Flap(
       {required this.id,

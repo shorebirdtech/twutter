@@ -1,5 +1,6 @@
 // This should vary with media queries?
 class LayoutConfig {
+  static const double appBarHeight = 40;
   static const double timelineHorizontalPadding = 10;
   static const double timelineWidth = 400;
   static const double avatarColumnWidth = 50;
