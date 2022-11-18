@@ -18,3 +18,11 @@ built on Shorebird could look like.
 - Add notifications
 - Add Search
 - Add Profile pages
+
+# Arch
+Client holds open an EventSource connection to the server to receive
+notification of timeline, message or notifciation updates.
+Then when the user takes action, the client sends a request to the
+server to pull the latest timeline, message or notification data.
+Maybe messages are sent down in this open connection already?
+

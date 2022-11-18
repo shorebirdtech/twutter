@@ -6,11 +6,11 @@
 // Direct mention tweet, including "show this thread"
 
 enum NotificationType {
-  follow,
-  like,
-  mention,
-  retweet,
-  direct,
+  follow, // you were followed
+  like, // something you did was liked
+  mention, // Something mentioned you was acted on.
+  retweet, // Something you did was retweeted.
+  direct, // You were directly mentioned.
 }
 
 class Notification {

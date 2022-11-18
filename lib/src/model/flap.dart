@@ -1,5 +1,9 @@
-import 'user.dart';
+import 'package:json_annotation/json_annotation.dart';
+
 import 'model.dart';
+import 'user.dart';
+
+part 'flap.g.dart';
 
 // Retweet or not (can wrap)
 // Author line
@@ -11,12 +15,21 @@ import 'model.dart';
 // "Show this thread" (only on threads)
 // Promoted marker (only on promoted)
 
+@JsonSerializable()
 class DraftFlap {
   final String authorId;
   final String? previousFlapId; // for threads
   final String? originalFlapId; // for retweets
   final bool isPromoted;
   final String content;
+
+  const DraftFlap({
+    required this.authorId,
+    this.previousFlapId,
+    this.originalFlapId,
+    this.isPromoted = false,
+    required this.content,
+  });
 
   const DraftFlap.compose({required this.authorId, required this.content})
       : isPromoted = false,
@@ -41,8 +54,14 @@ class DraftFlap {
       required this.content})
       : isPromoted = false,
         previousFlapId = null;
+
+  factory DraftFlap.fromJson(Map<String, dynamic> json) =>
+      _$DraftFlapFromJson(json);
+
+  Map<String, dynamic> toJson() => _$DraftFlapToJson(this);
 }
 
+@JsonSerializable()
 class Flap {
   final String id; // Only on confirmed flaps?
   final String authorId;
@@ -84,4 +103,8 @@ class Flap {
         previousFlapId = draft.previousFlapId,
         originalFlapId = draft.originalFlapId,
         isPromoted = draft.isPromoted;
+
+  factory Flap.fromJson(Map<String, dynamic> json) => _$FlapFromJson(json);
+
+  Map<String, dynamic> toJson() => _$FlapToJson(this);
 }
