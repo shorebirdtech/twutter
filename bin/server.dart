@@ -9,6 +9,7 @@ void main() async {
 
   var handlers = <ShorebirdHandler>[
     FlapHandler(FlapEndpoint()),
+    AuthHandler(AuthEndpoint()),
   ];
   var server = Server();
   await server.serve(handlers, 'localhost', 8080);

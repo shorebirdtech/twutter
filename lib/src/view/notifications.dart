@@ -28,16 +28,17 @@ class Notifications extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    var notifications = authenticatedCache!.notifications;
     return SizedBox(
       width: LayoutConfig.timelineWidth,
-      child: cache.notifications.isEmpty
+      child: notifications.isEmpty
           ? const _EmptyNotifications()
           : ListView.separated(
               itemBuilder: ((context, index) {
                 return NotificationGroupView(
-                    notificationGroup: cache.notifications[index]);
+                    notificationGroup: notifications[index]);
               }),
-              itemCount: cache.notifications.length,
+              itemCount: notifications.length,
               separatorBuilder: (context, index) => const Divider(),
               physics: const AlwaysScrollableScrollPhysics(),
             ),

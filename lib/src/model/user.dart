@@ -15,15 +15,16 @@ class Credentials {
 @JsonSerializable()
 class AuthResponse {
   final String sessionId;
-  final String userId;
+  final User user;
 
-  AuthResponse({required this.sessionId, required this.userId});
+  AuthResponse({required this.sessionId, required this.user});
 
   factory AuthResponse.fromJson(Map<String, dynamic> json) =>
       _$AuthResponseFromJson(json);
   Map<String, dynamic> toJson() => _$AuthResponseToJson(this);
 }
 
+@JsonSerializable()
 // Split user (auth) vs. profile (public) data?
 class User {
   final String id;
@@ -37,16 +38,17 @@ class User {
   String get initials => displayName.split(' ').map((s) => s[0]).join();
 
   // FIXME: Remove: Mutable and has a time component.
-  final List<String> following;
-  final List<String> followers;
+  // final List<String> following;
+  // final List<String> followers;
 
   const User({
     required this.id,
     required this.displayName,
     required this.handle,
-    this.following = const [],
-    this.followers = const [],
     this.official = false,
     this.verified = false,
   });
+
+  factory User.fromJson(Map<String, dynamic> json) => _$UserFromJson(json);
+  Map<String, dynamic> toJson() => _$UserToJson(this);
 }

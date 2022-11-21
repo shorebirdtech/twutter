@@ -23,7 +23,7 @@ class NotificationGroupView extends StatelessWidget {
       case NotificationType.direct:
         var userId = notificationGroup.notifications.first.userId!;
         return AvatarView(
-          user: cache.userById(userId),
+          user: authenticatedCache!.userById(userId)!,
           radius: LayoutConfig.avatarRadius,
         );
     }
@@ -37,14 +37,15 @@ class NotificationGroupView extends StatelessWidget {
 // Direct mention tweet, including "show this thread"
 
   List<Widget> actionLineActor() {
+    var cache = authenticatedCache!;
     var notifications = notificationGroup.notifications;
     var count = notifications.length;
-    var firstUser = cache.userById(notifications.first.userId!);
+    var firstUser = cache.userById(notifications.first.userId!)!;
     if (count == 1) {
       return firstUser.verifiedName;
     } else if (count == 2) {
       var secondNotification = notifications[1];
-      var secondUser = cache.userById(secondNotification.userId!);
+      var secondUser = cache.userById(secondNotification.userId!)!;
       return [
         ...firstUser.verifiedName,
         const Text(' and '),
@@ -81,9 +82,9 @@ class NotificationGroupView extends StatelessWidget {
     if (flapId == null) {
       throw "No object for $notification";
     }
-    var flap = cache.flapById(flapId);
+    var flap = authenticatedCache!.flapById(flapId)!;
     // your flap, your reply, a flap you were mentioned in
-    if (flap.authorId != cache.userId) {
+    if (flap.authorId != authenticatedCache!.user.id) {
       return "a flap you were mentioned in";
     } else {
       if (flap.isReply) {
@@ -119,7 +120,7 @@ class NotificationGroupView extends StatelessWidget {
           notificationGroup.notifications.take(7).map((notification) {
         var userId = notification.userId!;
         return AvatarView(
-          user: cache.userById(userId),
+          user: authenticatedCache!.userById(userId)!,
           radius: LayoutConfig.avatarRadius,
         );
       }).toList(),

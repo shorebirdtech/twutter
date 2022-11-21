@@ -1,6 +1,6 @@
 import 'package:flutter/widgets.dart';
 
-import 'src/view/app.dart';
+import 'app.dart';
 
 void main() {
   runApp(const TwutterApp());

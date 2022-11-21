@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../gen/client.dart';
 import '../model/user.dart';
-import 'config.dart';
+import '../view/config.dart';
 
 class LoginDialog extends StatefulWidget {
   const LoginDialog({super.key});
@@ -13,18 +13,25 @@ class LoginDialog extends StatefulWidget {
 
 class _LoginDialogState extends State<LoginDialog> {
   TextEditingController textController = TextEditingController();
+  String? failureMessage;
 
-  // void closeLoginWindow() {
-  //   // This exists so the async post function doesn't have to hold onto
-  //   // the context object.
-  //   Navigator.of(context).pop();
-  // }
+  void closeLoginWindow() {
+    // This exists so the async post function doesn't have to hold onto
+    // the context object.
+    Navigator.of(context).pushReplacementNamed("/home");
+  }
 
   void login() async {
     var credentials = Credentials(username: textController.text);
     var result = await client.login(credentials);
-    // If success, set me = the userid returned and continue.
-    // if failed, show error message, offer to create account?
+    if (result.success) {
+      closeLoginWindow();
+    } else {
+      // if failed, show error message, offer to create account?
+      setState(() {
+        failureMessage = result.error;
+      });
+    }
   }
 
   @override
@@ -47,7 +54,9 @@ class _LoginDialogState extends State<LoginDialog> {
           controller: textController,
           decoration: const InputDecoration(
               border: InputBorder.none, hintText: "Username"),
+          onSubmitted: (_) => login(),
         ),
+        if (failureMessage != null) Text(failureMessage!),
       ]),
     );
   }

@@ -1,27 +1,35 @@
-import 'dummy_data.dart';
 import 'flap.dart';
 import 'notification.dart';
 import 'user.dart';
 
-// Client's view of the datastore?  Needs caching.
-class ClientDataStore {
-  // Authenticated user.
-  String? userId;
+// Client's view of the datastore?
+// Should be per-user.
+
+class AuthenticatedCache {
+  User user;
+  AuthenticatedCache(this.user) {
+    _userCache[user.id] = user;
+  }
+
+  final Map<String, User> _userCache = {};
+  User? userById(String id) => _userCache[id];
+
+  final Map<String, Flap> _flapCache = {};
+  Flap? flapById(String id) => _flapCache[id];
+
   bool hasNewFlaps = false;
-  bool hasNewMessages = false;
-
-  // FIXME: make async?  This should use an endpoint?
-  User userById(String id) => demoUsers.firstWhere((u) => u.id == id);
-  // FIXME: This is wrong, this needs to go to a FlapCache or something?
-  Flap flapById(String id) => latestFlaps.firstWhere((f) => f.id == id);
-
-  // Client caches.
   List<Flap> latestFlaps = [];
+
   List<NotificationGroup> notifications = [];
+
   // Drafts should be persisted to disk?
   List<DraftFlap> drafts = [];
+
+  bool hasNewMessages = false;
 }
 
-var cache = ClientDataStore();
+// FIXME: This should not be global, rather an InheritedWidget or similar.
+// Callers should check null and use a local (hence the long name).
+AuthenticatedCache? authenticatedCache;
 
 // var model = DummyStoreBuilder().build();

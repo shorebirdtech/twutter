@@ -2,15 +2,15 @@ import 'package:flutter/material.dart';
 import 'package:twutter/src/view/avatar.dart';
 import 'package:twutter/src/view/config.dart';
 
-import 'model/model.dart';
-import 'view/notifications.dart';
-import 'view/timeline.dart';
+import '../model/model.dart';
+import '../view/notifications.dart';
+import '../view/timeline.dart';
 
-class RootNavigation extends StatefulWidget {
-  const RootNavigation({super.key});
+class Home extends StatefulWidget {
+  const Home({super.key});
 
   @override
-  State<RootNavigation> createState() => _RootNavigationState();
+  State<Home> createState() => _HomeState();
 }
 
 class Screen {
@@ -105,7 +105,7 @@ class BadgedIcon extends StatelessWidget {
   }
 }
 
-class _RootNavigationState extends State<RootNavigation> {
+class _HomeState extends State<Home> {
   int _selectedScreenIndex = 0;
 
   void _onItemTapped(int index) {
@@ -116,9 +116,11 @@ class _RootNavigationState extends State<RootNavigation> {
 
   @override
   Widget build(BuildContext context) {
-    if (cache.userId == null) {
+    print("cache: $authenticatedCache");
+    if (authenticatedCache == null) {
       return const _Placeholder("Not logged in?");
     }
+    var cache = authenticatedCache!;
 
     final List<Screen> screens = <Screen>[
       Screen(
@@ -157,7 +159,7 @@ class _RootNavigationState extends State<RootNavigation> {
         leading: Padding(
           padding: const EdgeInsets.fromLTRB(
               LayoutConfig.timelineHorizontalPadding, 0, 20, 0),
-          child: AvatarView(user: cache.userById(cache.userId!)),
+          child: AvatarView(user: cache.user),
         ), // Decide what logged out behavior is?
         title: selectedScreen.appBarTitle,
         centerTitle: true,

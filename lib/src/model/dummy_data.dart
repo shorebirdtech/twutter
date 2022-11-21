@@ -77,9 +77,8 @@ class DummyStoreBuilder {
     addFlap(flap, createdAt);
   }
 
-  ClientDataStore build() {
-    var store = ClientDataStore();
-    store.userId = _eric.id;
+  AuthenticatedCache build() {
+    var store = AuthenticatedCache(_eric);
     // Things to test:
     // Retweet or not (can wrap)
     // Author line

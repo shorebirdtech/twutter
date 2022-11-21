@@ -17,11 +17,27 @@ Map<String, dynamic> _$CredentialsToJson(Credentials instance) =>
 
 AuthResponse _$AuthResponseFromJson(Map<String, dynamic> json) => AuthResponse(
       sessionId: json['sessionId'] as String,
-      userId: json['userId'] as String,
+      user: User.fromJson(json['user'] as Map<String, dynamic>),
     );
 
 Map<String, dynamic> _$AuthResponseToJson(AuthResponse instance) =>
     <String, dynamic>{
       'sessionId': instance.sessionId,
-      'userId': instance.userId,
+      'user': instance.user,
+    };
+
+User _$UserFromJson(Map<String, dynamic> json) => User(
+      id: json['id'] as String,
+      displayName: json['displayName'] as String,
+      handle: json['handle'] as String,
+      official: json['official'] as bool? ?? false,
+      verified: json['verified'] as bool? ?? false,
+    );
+
+Map<String, dynamic> _$UserToJson(User instance) => <String, dynamic>{
+      'id': instance.id,
+      'displayName': instance.displayName,
+      'handle': instance.handle,
+      'official': instance.official,
+      'verified': instance.verified,
     };

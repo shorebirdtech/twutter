@@ -1,4 +1,5 @@
 import 'package:shorebird/shorebird.dart';
+import 'package:twutter/src/model/user.dart';
 
 import "../model/flap.dart";
 import 'model.dart';
@@ -81,10 +82,15 @@ class TimelineEndpoint extends Endpoint {
 }
 
 class AuthEndpoint extends Endpoint {
-  Future<void> login(RequestContext context) async {
+  Future<AuthResponse> login(
+      RequestContext context, Credentials credentials) async {
     // Get the user from the request.
     // Validate the user.
     // Create a session.
     // Set the session cookie.
+    return AuthResponse(
+      sessionId: '1',
+      user: const User(id: '0', displayName: 'Eric Seidel', handle: '_eseidel'),
+    );
   }
 }

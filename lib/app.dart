@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 
-import '../navigation.dart';
-import 'compose.dart';
-import 'login.dart';
+import 'src/screen/home.dart';
+import 'src/screen/login.dart';
+import 'src/view/compose.dart';
 
 class TwutterApp extends StatelessWidget {
   const TwutterApp({super.key});
@@ -22,7 +22,7 @@ class TwutterApp extends StatelessWidget {
       initialRoute: '/login',
       routes: {
         '/login': (context) => const LoginDialog(),
-        '/': (context) => const RootNavigation(),
+        '/home': (context) => const Home(),
         '/compose': (context) => const ComposeDialog(),
       },
     );

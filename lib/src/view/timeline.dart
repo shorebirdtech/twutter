@@ -28,15 +28,16 @@ class Timeline extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    var latestFlaps = authenticatedCache!.latestFlaps;
     return SizedBox(
       width: LayoutConfig.timelineWidth,
-      child: cache.latestFlaps.isEmpty
+      child: latestFlaps.isEmpty
           ? const _EmptyTimeline()
           : ListView.separated(
               itemBuilder: ((context, index) {
-                return FlapView(flap: cache.latestFlaps[index]);
+                return FlapView(flap: latestFlaps[index]);
               }),
-              itemCount: cache.latestFlaps.length,
+              itemCount: latestFlaps.length,
               separatorBuilder: (context, index) => const Divider(),
               physics: const AlwaysScrollableScrollPhysics(),
             ),

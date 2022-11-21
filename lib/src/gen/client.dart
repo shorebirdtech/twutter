@@ -6,9 +6,13 @@ import 'package:twutter/src/model/flap.dart';
 import 'package:twutter/src/model/model.dart';
 import 'package:twutter/src/model/user.dart';
 
-enum LoginResult {
-  success,
-  failure,
+class LoginResult {
+  bool get success => error == null;
+  final String? error;
+  LoginResult({this.error});
+
+  LoginResult.failure(String this.error);
+  LoginResult.success() : error = null;
 }
 
 class Client {
@@ -48,15 +52,15 @@ class Client {
   Future<LoginResult> login(Credentials credentials) async {
     // Unclear if this should use post() or not since it sets up the session.
     Uri uri = Uri.parse('$baseUrl/login');
-    var response = await http.post(uri, body: credentials.toJson());
+    var response = await http.post(uri, body: jsonEncode(credentials.toJson()));
     if (response.statusCode != HttpStatus.ok) {
-      return LoginResult.failure;
+      return LoginResult.failure(response.reasonPhrase!);
     }
     var resultJson = jsonDecode(response.body);
     var result = AuthResponse.fromJson(resultJson);
     _sessionId = result.sessionId;
-    cache.userId = result.userId;
-    return LoginResult.success;
+    authenticatedCache = AuthenticatedCache(result.user);
+    return LoginResult.success();
   }
 }
 
