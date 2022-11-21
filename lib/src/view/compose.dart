@@ -39,7 +39,7 @@ class _ComposeDialogState extends State<ComposeDialog> {
     // Validate the draft.
     // Send to the server.
     try {
-      await client.publish(draft);
+      await client.flap.publish(draft);
       closeComposeWindow();
     } catch (e) {
       // Show an error message.
@@ -49,12 +49,12 @@ class _ComposeDialogState extends State<ComposeDialog> {
         builder: (BuildContext context) => AlertDialog(
           title: const Text('Flap not sent'),
           content: const Text(
-              "We're sorry, we weren't able to send your Flap. Would you like to retry or save this Flap in drafts?"),
+              "We're sorry, we weren't able to send your Flap. Would you like to retry?"), // or save this Flap in drafts?
           actions: [
-            TextButton(
-              onPressed: () => Navigator.of(context).pop(),
-              child: const Text('Go to drafts'),
-            ),
+            // TextButton(
+            //   onPressed: () => Navigator.of(context).pop(),
+            //   child: const Text('Go to drafts'),
+            // ),
             TextButton(
               onPressed: () => Navigator.of(context).pop(),
               child: const Text('Retry'),

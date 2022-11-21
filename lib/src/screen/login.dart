@@ -23,7 +23,7 @@ class _LoginDialogState extends State<LoginDialog> {
 
   void login() async {
     var credentials = Credentials(username: textController.text);
-    var result = await client.login(credentials);
+    var result = await client.auth.login(credentials);
     if (result.success) {
       closeLoginWindow();
     } else {

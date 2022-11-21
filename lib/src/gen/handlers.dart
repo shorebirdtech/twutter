@@ -15,11 +15,12 @@ class FlapHandler extends ShorebirdHandler {
 
   @override
   void addRoutes(Router router) {
-    router.post('/flaps/post', (Request request) async {
+    router.post('/flap/post', (Request request) async {
       // verify session
       var draftJson = jsonDecode(await request.readAsString());
       var draft = DraftFlap.fromJson(draftJson);
       await endpoint.post(RequestContext(), draft);
+      return Response.ok('OK');
     });
   }
 }

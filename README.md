@@ -7,9 +7,7 @@ Using Twitter as an example to demonstrate what a front-to-back app
 built on Shorebird could look like.
 
 ## Burndown List
-- Make it possible to post.
 - Make it possible to refresh timeline.
-- Make it possible to follow/unfollow.
 - Publish to web via github hook?
 - Remove real people names.
 - Add Likes
@@ -18,6 +16,7 @@ built on Shorebird could look like.
 - Add notifications
 - Add Search
 - Add Profile pages
+- Make it possible to follow/unfollow.
 
 # Arch
 Client holds open an EventSource connection to the server to receive
@@ -40,3 +39,11 @@ Views reach through to model which caches or requests from client as necessary.
   to cut at?
 - e.g. @trusted annotation
 - Authorization should be expressed in the type system, e.g. AuthorizedContext.
+
+
+# Pain
+* When you forget return Response.ok() from handler, you get:
+Error thrown by handler.
+type 'Null' is not a subtype of type 'FutureOr<Response>'
+package:shelf/src/middleware/logger.dart 30:62  logRequests.<fn>.<fn>.<fn>
+* When you make a change to the server you want both it and the client to hotreload.

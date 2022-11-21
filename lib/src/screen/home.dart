@@ -60,18 +60,18 @@ class _ComposeFloatingActionButton extends StatelessWidget {
   }
 }
 
-class _ComposeMessageFloatingActionButton extends StatelessWidget {
-  const _ComposeMessageFloatingActionButton();
+// class _ComposeMessageFloatingActionButton extends StatelessWidget {
+//   const _ComposeMessageFloatingActionButton();
 
-  @override
-  Widget build(BuildContext context) {
-    return FloatingActionButton(
-      onPressed: () {},
-      tooltip: 'Compose Message',
-      child: const Icon(Icons.mail),
-    );
-  }
-}
+//   @override
+//   Widget build(BuildContext context) {
+//     return FloatingActionButton(
+//       onPressed: () {},
+//       tooltip: 'Compose Message',
+//       child: const Icon(Icons.mail),
+//     );
+//   }
+// }
 
 class _UnreadBadgePainter extends CustomPainter {
   _UnreadBadgePainter();
@@ -128,7 +128,7 @@ class _HomeState extends State<Home> {
         body: const Timeline(),
         appBarTitleOverride: const Icon(Icons.flutter_dash),
         floatingActionButton: const _ComposeFloatingActionButton(),
-        navigationIcon: BadgedIcon(Icons.home, hasBadge: cache.hasNewFlaps),
+        navigationIcon: BadgedIcon(Icons.home, hasBadge: cache.hasUnreadFlaps),
       ),
       // const Screen(
       //   title: "Search",
@@ -142,12 +142,12 @@ class _HomeState extends State<Home> {
         floatingActionButton: _ComposeFloatingActionButton(),
         navigationIcon: Icon(Icons.notifications),
       ),
-      Screen(
-        title: "Messages",
-        body: const _Placeholder("Messages"),
-        floatingActionButton: const _ComposeMessageFloatingActionButton(),
-        navigationIcon: BadgedIcon(Icons.mail, hasBadge: cache.hasNewMessages),
-      ),
+      // Screen(
+      //   title: "Messages",
+      //   body: const _Placeholder("Messages"),
+      //   floatingActionButton: const _ComposeMessageFloatingActionButton(),
+      //   navigationIcon: BadgedIcon(Icons.mail, hasBadge: cache.hasNewMessages),
+      // ),
     ];
 
     var selectedScreen = screens[_selectedScreenIndex];

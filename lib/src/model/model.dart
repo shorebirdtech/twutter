@@ -17,13 +17,14 @@ class AuthenticatedCache {
   final Map<String, Flap> _flapCache = {};
   Flap? flapById(String id) => _flapCache[id];
 
-  bool hasNewFlaps = false;
+  bool isRefreshingTimeline = false;
+  bool hasUnreadFlaps = false;
   List<Flap> latestFlaps = [];
 
   List<NotificationGroup> notifications = [];
 
-  // Drafts should be persisted to disk?
-  List<DraftFlap> drafts = [];
+  // // Drafts should be persisted to disk?
+  // List<DraftFlap> drafts = [];
 
   bool hasNewMessages = false;
 }
@@ -33,3 +34,13 @@ class AuthenticatedCache {
 AuthenticatedCache? authenticatedCache;
 
 // var model = DummyStoreBuilder().build();
+
+// When loading the latest N tweets and K > N behind, twitter will only load N
+// but will elide the middle section of the loaded.
+class TimelineCache {
+  final String userId;
+  final DateTime refreshTime;
+  final String lastReadFlapId;
+
+  TimelineCache(this.userId, this.refreshTime, this.lastReadFlapId);
+}

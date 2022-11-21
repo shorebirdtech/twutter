@@ -15,14 +15,17 @@ class LoginResult {
   LoginResult.success() : error = null;
 }
 
-class Client {
+class Connection {
+  final String baseUrl = 'http://localhost:8080';
+
   String? _sessionId;
 
-  // This should come from the connection?
-  static const String baseUrl = 'http://localhost:8080';
+  void setSessionId(String sessionId) {
+    _sessionId = sessionId;
+  }
 
-  Future<http.Response> sessionPost(
-      String path, Map<String, dynamic> body) async {
+  // Should use our own Response type.
+  Future<http.Response> post(String path, Map<String, dynamic> body) async {
     var url = Uri.parse('$baseUrl/$path');
     var headers = {
       'Content-Type': 'application/json',
@@ -33,13 +36,26 @@ class Client {
     }
     return await http.post(url, headers: headers, body: jsonEncode(body));
   }
+}
+
+class Client {
+  final Connection connection;
+  Client(this.connection);
+}
+
+class FlapClient extends Client {
+  FlapClient(super.connection);
 
   Future<void> publish(DraftFlap draft) async {
-    var response = await sessionPost('flaps/post', draft.toJson());
+    var response = await connection.post('flap/post', draft.toJson());
     if (response.statusCode != HttpStatus.ok) {
       throw Exception('Failed to publish flap');
     }
   }
+}
+
+class AuthClient extends Client {
+  AuthClient(super.connection);
 
   // Future<User> whoAmI() async {
   //   var response = await sessionPost('users/whoami', {});
@@ -51,17 +67,27 @@ class Client {
 
   Future<LoginResult> login(Credentials credentials) async {
     // Unclear if this should use post() or not since it sets up the session.
-    Uri uri = Uri.parse('$baseUrl/login');
-    var response = await http.post(uri, body: jsonEncode(credentials.toJson()));
+    var response = await connection.post('login', credentials.toJson());
     if (response.statusCode != HttpStatus.ok) {
       return LoginResult.failure(response.reasonPhrase!);
     }
     var resultJson = jsonDecode(response.body);
     var result = AuthResponse.fromJson(resultJson);
-    _sessionId = result.sessionId;
+    connection.setSessionId(result.sessionId);
     authenticatedCache = AuthenticatedCache(result.user);
     return LoginResult.success();
   }
 }
 
-var client = Client();
+class ClientRoot {
+  final Connection connection;
+  final FlapClient flap;
+  final AuthClient auth;
+
+  ClientRoot(this.connection)
+      : flap = FlapClient(connection),
+        auth = AuthClient(connection);
+}
+
+// FIXME: This should not be global.
+var client = ClientRoot(Connection());
