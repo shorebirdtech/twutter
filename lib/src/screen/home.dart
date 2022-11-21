@@ -2,8 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:twutter/src/view/avatar.dart';
 import 'package:twutter/src/view/config.dart';
 
-import '../model/model.dart';
-import '../view/notifications.dart';
+import '../state.dart';
 import '../view/timeline.dart';
 
 class Home extends StatefulWidget {
@@ -116,11 +115,11 @@ class _HomeState extends State<Home> {
 
   @override
   Widget build(BuildContext context) {
-    print("cache: $authenticatedCache");
-    if (authenticatedCache == null) {
+    var store = StoreState.of(context);
+    if (store.authenticatedCache == null) {
       return const _Placeholder("Not logged in?");
     }
-    var cache = authenticatedCache!;
+    var cache = store.authenticatedCache!;
 
     final List<Screen> screens = <Screen>[
       Screen(
@@ -136,12 +135,12 @@ class _HomeState extends State<Home> {
       //   floatingActionButton: _ComposeFloatingActionButton(),
       //   navigationIcon: Icon(Icons.search),
       // ),
-      const Screen(
-        title: "Notifications",
-        body: Notifications(),
-        floatingActionButton: _ComposeFloatingActionButton(),
-        navigationIcon: Icon(Icons.notifications),
-      ),
+      // const Screen(
+      //   title: "Notifications",
+      //   body: Notifications(),
+      //   floatingActionButton: _ComposeFloatingActionButton(),
+      //   navigationIcon: Icon(Icons.notifications),
+      // ),
       // Screen(
       //   title: "Messages",
       //   body: const _Placeholder("Messages"),

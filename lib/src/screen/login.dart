@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
-import '../gen/client.dart';
 import '../model/user.dart';
+import '../state.dart';
 import '../view/config.dart';
 
 class LoginDialog extends StatefulWidget {
@@ -22,9 +22,11 @@ class _LoginDialogState extends State<LoginDialog> {
   }
 
   void login() async {
+    var store = StoreState.of(context);
     var credentials = Credentials(username: textController.text);
-    var result = await client.auth.login(credentials);
+    var result = await store.client.auth.login(credentials);
     if (result.success) {
+      store.authAsUser(result.auth!);
       closeLoginWindow();
     } else {
       // if failed, show error message, offer to create account?

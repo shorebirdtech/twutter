@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:twutter/src/view/config.dart';
 
-import '../model/model.dart';
+import '../state.dart';
 import 'flap.dart';
 
 class _EmptyTimeline extends StatelessWidget {
@@ -39,7 +39,8 @@ class Timeline extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    var latestFlaps = authenticatedCache!.latestFlaps;
+    var store = StoreState.of(context);
+    var latestFlaps = store.authenticatedCache!.latestFlaps;
     return SizedBox(
       width: LayoutConfig.timelineWidth,
       child: latestFlaps.isEmpty

@@ -29,10 +29,6 @@ class AuthenticatedCache {
   bool hasNewMessages = false;
 }
 
-// FIXME: This should not be global, rather an InheritedWidget or similar.
-// Callers should check null and use a local (hence the long name).
-AuthenticatedCache? authenticatedCache;
-
 // var model = DummyStoreBuilder().build();
 
 // When loading the latest N tweets and K > N behind, twitter will only load N

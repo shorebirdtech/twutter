@@ -3,16 +3,16 @@ import 'dart:io';
 
 import 'package:http/http.dart' as http;
 import 'package:twutter/src/model/flap.dart';
-import 'package:twutter/src/model/model.dart';
 import 'package:twutter/src/model/user.dart';
 
+// Should this be a package:freezed union type?
 class LoginResult {
   bool get success => error == null;
   final String? error;
-  LoginResult({this.error});
+  final AuthResponse? auth;
 
-  LoginResult.failure(String this.error);
-  LoginResult.success() : error = null;
+  const LoginResult.failure(String this.error) : auth = null;
+  const LoginResult.success(AuthResponse this.auth) : error = null;
 }
 
 class Connection {
@@ -73,9 +73,7 @@ class AuthClient extends Client {
     }
     var resultJson = jsonDecode(response.body);
     var result = AuthResponse.fromJson(resultJson);
-    connection.setSessionId(result.sessionId);
-    authenticatedCache = AuthenticatedCache(result.user);
-    return LoginResult.success();
+    return LoginResult.success(result);
   }
 }
 
@@ -88,6 +86,3 @@ class ClientRoot {
       : flap = FlapClient(connection),
         auth = AuthClient(connection);
 }
-
-// FIXME: This should not be global.
-var client = ClientRoot(Connection());

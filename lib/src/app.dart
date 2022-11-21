@@ -1,15 +1,17 @@
 import 'package:flutter/material.dart';
 
-import 'src/screen/home.dart';
-import 'src/screen/login.dart';
-import 'src/view/compose.dart';
+import 'screen/home.dart';
+import 'screen/login.dart';
+import 'state.dart';
+import 'view/compose.dart';
 
 class TwutterApp extends StatelessWidget {
   const TwutterApp({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
+    return StoreState(
+        child: MaterialApp(
       title: 'Twutter',
       theme: ThemeData.dark().copyWith(
         primaryColor: Colors.black,
@@ -25,6 +27,6 @@ class TwutterApp extends StatelessWidget {
         '/home': (context) => const Home(),
         '/compose': (context) => const ComposeDialog(),
       },
-    );
+    ));
   }
 }

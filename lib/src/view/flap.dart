@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:twutter/src/view/avatar.dart';
 
 import '../model/flap.dart';
-import '../model/model.dart';
+import '../state.dart';
 import 'config.dart';
 import 'theme.dart';
 import 'user.dart';
@@ -59,8 +59,9 @@ class FlapView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    var store = StoreState.of(context);
     // Is profile visibility per-user?  Can this just use a global cache?
-    var author = authenticatedCache!.userById(flap.authorId)!;
+    var author = store.authenticatedCache!.userById(flap.authorId)!;
     var authorLine = Row(
       mainAxisAlignment: MainAxisAlignment.start,
       children: [
