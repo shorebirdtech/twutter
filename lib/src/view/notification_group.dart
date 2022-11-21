@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:twutter/src/model/notification.dart';
-import 'config.dart';
-import 'avatar.dart';
+
 import '../model/model.dart';
+import 'avatar.dart';
+import 'config.dart';
 import 'user.dart';
 
 class NotificationGroupView extends StatelessWidget {
@@ -21,9 +22,8 @@ class NotificationGroupView extends StatelessWidget {
         return const Icon(Icons.favorite);
       case NotificationType.direct:
         var userId = notificationGroup.notifications.first.userId!;
-        var user = model.userById(userId);
         return AvatarView(
-          user: user,
+          user: cache.userById(userId),
           radius: LayoutConfig.avatarRadius,
         );
     }
@@ -39,12 +39,12 @@ class NotificationGroupView extends StatelessWidget {
   List<Widget> actionLineActor() {
     var notifications = notificationGroup.notifications;
     var count = notifications.length;
-    var firstUser = model.userById(notifications.first.userId!);
+    var firstUser = cache.userById(notifications.first.userId!);
     if (count == 1) {
       return firstUser.verifiedName;
     } else if (count == 2) {
       var secondNotification = notifications[1];
-      var secondUser = model.userById(secondNotification.userId!);
+      var secondUser = cache.userById(secondNotification.userId!);
       return [
         ...firstUser.verifiedName,
         const Text(' and '),
@@ -81,9 +81,9 @@ class NotificationGroupView extends StatelessWidget {
     if (flapId == null) {
       throw "No object for $notification";
     }
-    var flap = model.flapById(flapId);
+    var flap = cache.flapById(flapId);
     // your flap, your reply, a flap you were mentioned in
-    if (flap.author != model.me) {
+    if (flap.authorId != cache.userId) {
       return "a flap you were mentioned in";
     } else {
       if (flap.isReply) {
@@ -118,9 +118,8 @@ class NotificationGroupView extends StatelessWidget {
           // Up to 7 avatars.
           notificationGroup.notifications.take(7).map((notification) {
         var userId = notification.userId!;
-        var user = model.userById(userId);
         return AvatarView(
-          user: user,
+          user: cache.userById(userId),
           radius: LayoutConfig.avatarRadius,
         );
       }).toList(),

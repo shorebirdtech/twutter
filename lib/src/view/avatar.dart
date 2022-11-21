@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+
 import '../model/user.dart';
 
 class AvatarView extends StatelessWidget {

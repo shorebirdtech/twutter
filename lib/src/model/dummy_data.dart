@@ -79,7 +79,7 @@ class DummyStoreBuilder {
 
   ClientDataStore build() {
     var store = ClientDataStore();
-    store.me = _eric;
+    store.userId = _eric.id;
     // Things to test:
     // Retweet or not (can wrap)
     // Author line

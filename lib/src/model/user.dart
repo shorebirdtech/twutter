@@ -14,9 +14,10 @@ class Credentials {
 
 @JsonSerializable()
 class AuthResponse {
-  final String? sessionId;
+  final String sessionId;
+  final String userId;
 
-  AuthResponse({this.sessionId});
+  AuthResponse({required this.sessionId, required this.userId});
 
   factory AuthResponse.fromJson(Map<String, dynamic> json) =>
       _$AuthResponseFromJson(json);
@@ -26,19 +27,18 @@ class AuthResponse {
 // Split user (auth) vs. profile (public) data?
 class User {
   final String id;
+  // Mutable with a long time scale component.
   final String displayName;
   final String handle;
   final bool official;
   final bool verified;
-  final List<String> following;
-  final List<String> followers;
 
   // Good enough hack for now. Remove when we have profile pictures.
   String get initials => displayName.split(' ').map((s) => s[0]).join();
 
-  // FIXME: Not sure where these go?
-  final bool hasNewFlaps = false;
-  final bool hasNewMessages = false;
+  // FIXME: Remove: Mutable and has a time component.
+  final List<String> following;
+  final List<String> followers;
 
   const User({
     required this.id,

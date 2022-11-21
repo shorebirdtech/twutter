@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../navigation.dart';
 import 'compose.dart';
+import 'login.dart';
 
 class TwutterApp extends StatelessWidget {
   const TwutterApp({super.key});
@@ -17,8 +18,10 @@ class TwutterApp extends StatelessWidget {
               backgroundColor: Colors.black,
             ),
       ),
-      initialRoute: '/',
+      // We shouldn't start at /login.
+      initialRoute: '/login',
       routes: {
+        '/login': (context) => const LoginDialog(),
         '/': (context) => const RootNavigation(),
         '/compose': (context) => const ComposeDialog(),
       },

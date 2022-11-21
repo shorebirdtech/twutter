@@ -16,10 +16,12 @@ Map<String, dynamic> _$CredentialsToJson(Credentials instance) =>
     };
 
 AuthResponse _$AuthResponseFromJson(Map<String, dynamic> json) => AuthResponse(
-      sessionId: json['sessionId'] as String?,
+      sessionId: json['sessionId'] as String,
+      userId: json['userId'] as String,
     );
 
 Map<String, dynamic> _$AuthResponseToJson(AuthResponse instance) =>
     <String, dynamic>{
       'sessionId': instance.sessionId,
+      'userId': instance.userId,
     };

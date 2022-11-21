@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:twutter/src/view/avatar.dart';
+
 import '../model/flap.dart';
+import '../model/model.dart';
 import 'config.dart';
 import 'theme.dart';
 import 'user.dart';
@@ -40,7 +42,6 @@ class FlapControl extends StatelessWidget {
 class FlapView extends StatelessWidget {
   final Flap flap;
 
-
   const FlapView({super.key, required this.flap});
 
   String timeSince(DateTime time) {
@@ -58,13 +59,14 @@ class FlapView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    var author = cache.userById(flap.authorId);
     var authorLine = Row(
       mainAxisAlignment: MainAxisAlignment.start,
       children: [
-        ...flap.author.verifiedName,
+        ...author.verifiedName,
         const Text(' '),
         Text(
-          flap.author.handle,
+          author.handle,
           style: TwutterTheme.backgroundText(context),
         ),
         const Text(' \u2022 '),
@@ -126,7 +128,7 @@ class FlapView extends StatelessWidget {
                 ),
                 const SizedBox(width: LayoutConfig.avatarRightPadding),
                 Text(
-                  '${flap.author.displayName} Reflapped',
+                  '${author.displayName} Reflapped',
                   style: TwutterTheme.backgroundText(context),
                 ),
               ],
@@ -138,7 +140,7 @@ class FlapView extends StatelessWidget {
               SizedBox(
                 width: LayoutConfig.avatarColumnWidth,
                 child: AvatarView(
-                  user: flap.author,
+                  user: author,
                   radius: LayoutConfig.avatarRadius,
                 ),
               ),

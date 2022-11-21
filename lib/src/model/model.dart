@@ -6,7 +6,9 @@ import 'user.dart';
 // Client's view of the datastore?  Needs caching.
 class ClientDataStore {
   // Authenticated user.
-  User? me;
+  String? userId;
+  bool hasNewFlaps = false;
+  bool hasNewMessages = false;
 
   // FIXME: make async?  This should use an endpoint?
   User userById(String id) => demoUsers.firstWhere((u) => u.id == id);
@@ -20,4 +22,6 @@ class ClientDataStore {
   List<DraftFlap> drafts = [];
 }
 
-var model = DummyStoreBuilder().build();
+var cache = ClientDataStore();
+
+// var model = DummyStoreBuilder().build();

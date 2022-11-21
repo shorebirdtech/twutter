@@ -30,13 +30,13 @@ class Timeline extends StatelessWidget {
   Widget build(BuildContext context) {
     return SizedBox(
       width: LayoutConfig.timelineWidth,
-      child: model.latestFlaps.length == 0
+      child: cache.latestFlaps.isEmpty
           ? const _EmptyTimeline()
           : ListView.separated(
               itemBuilder: ((context, index) {
-                return FlapView(flap: model.latestFlaps[index]);
+                return FlapView(flap: cache.latestFlaps[index]);
               }),
-              itemCount: model.latestFlaps.length,
+              itemCount: cache.latestFlaps.length,
               separatorBuilder: (context, index) => const Divider(),
               physics: const AlwaysScrollableScrollPhysics(),
             ),

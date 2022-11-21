@@ -31,7 +31,7 @@ class FlapEndpoint extends Endpoint {
 
   // This should probably be a separate endpoint?
 
-  Future<void> publish(RequestContext context, DraftFlap draft) async {
+  Future<void> post(RequestContext context, DraftFlap draft) async {
     // Save the updated draft?
     // Create the flap from the draft.
     var flap = Flap.fromDraft(draft, DateTime.now(), nextFlapId());
@@ -66,7 +66,8 @@ class TimelineEndpoint extends Endpoint {
   Future<List<Flap>> getTimeline(RequestContext context,
       {String? sinceFlapId, int count = 30}) async {
     var session = SessionController.of(context);
-    var timeline = dataStore.timelineForUser(session.userId);
+    // This is the wrong API
+    var timeline = await dataStore.timelineForUser(session.userId);
     List<Flap> flaps = timeline.recentFollowedFlaps;
     if (sinceFlapId != null) {
       var lastSeenIndex =

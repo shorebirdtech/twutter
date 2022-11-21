@@ -26,3 +26,17 @@ Then when the user takes action, the client sends a request to the
 server to pull the latest timeline, message or notification data.
 Maybe messages are sent down in this open connection already?
 
+App should act as though everything is local, with many requests being
+async and failable.  The server should be able to run on the phone or in
+the cloud and it not matter.
+
+Views reach through to model which caches or requests from client as necessary.
+
+
+
+# Questions?
+- Can we delete the backend directory?
+- Can the compiler just decide what parts go where and find the async boundary
+  to cut at?
+- e.g. @trusted annotation
+- Authorization should be expressed in the type system, e.g. AuthorizedContext.

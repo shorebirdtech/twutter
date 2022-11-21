@@ -14,11 +14,11 @@ class LoginDialog extends StatefulWidget {
 class _LoginDialogState extends State<LoginDialog> {
   TextEditingController textController = TextEditingController();
 
-  void closeLoginWindow() {
-    // This exists so the async post function doesn't have to hold onto
-    // the context object.
-    Navigator.of(context).pop();
-  }
+  // void closeLoginWindow() {
+  //   // This exists so the async post function doesn't have to hold onto
+  //   // the context object.
+  //   Navigator.of(context).pop();
+  // }
 
   void login() async {
     var credentials = Credentials(username: textController.text);

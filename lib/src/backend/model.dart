@@ -35,16 +35,24 @@ class DataStore {
     await store.record(flapId).delete(db);
   }
 
-  Timeline timelineForUser(String userId) => Timeline(userId);
+  // This should just return a lazy object rather than filling it.
+  Future<Timeline> timelineForUser(String userId) async {
+    var store = stringMapStoreFactory.store('flaps');
+    // Get all Flaps for now.
+    var finder = Finder(sortOrders: [SortOrder('createdAt')]);
+    var flaps = await store.find(db, finder: finder);
+    return Timeline(
+        userId, flaps.map((record) => Flap.fromJson(record.value)).toList());
+  }
 }
 
 var dataStore = DataStore();
 
 class Timeline {
   final String userId;
-  final List<Flap> recentFollowedFlaps = [];
+  final List<Flap> recentFollowedFlaps;
 
-  Timeline(this.userId);
+  Timeline(this.userId, this.recentFollowedFlaps);
 }
 
 extension LastN<T> on List<T> {

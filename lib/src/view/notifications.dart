@@ -30,14 +30,14 @@ class Notifications extends StatelessWidget {
   Widget build(BuildContext context) {
     return SizedBox(
       width: LayoutConfig.timelineWidth,
-      child: model.notifications.isEmpty
+      child: cache.notifications.isEmpty
           ? const _EmptyNotifications()
           : ListView.separated(
               itemBuilder: ((context, index) {
                 return NotificationGroupView(
-                    notificationGroup: model.notifications[index]);
+                    notificationGroup: cache.notifications[index]);
               }),
-              itemCount: model.notifications.length,
+              itemCount: cache.notifications.length,
               separatorBuilder: (context, index) => const Divider(),
               physics: const AlwaysScrollableScrollPhysics(),
             ),

@@ -1,7 +1,5 @@
 import 'package:json_annotation/json_annotation.dart';
-
-import 'model.dart';
-import 'user.dart';
+import 'package:meta/meta.dart';
 
 part 'flap.g.dart';
 
@@ -15,6 +13,8 @@ part 'flap.g.dart';
 // "Show this thread" (only on threads)
 // Promoted marker (only on promoted)
 
+// Can this just be combined into Flap?
+// e.g. annotate which things with Flap?
 @JsonSerializable()
 class DraftFlap {
   final String authorId;
@@ -62,6 +62,7 @@ class DraftFlap {
 }
 
 @JsonSerializable()
+@immutable
 class Flap {
   final String id; // Only on confirmed flaps?
   final String authorId;
@@ -71,6 +72,9 @@ class Flap {
   final String content;
   final DateTime createdAt;
 
+  // These are mutable and require a query time.  Should be acccessors
+  // with a time component?
+  // These should not be lists, rather iterators that know their length.
   final List<String> replyIds = [];
   final List<String> reflapIds = [];
   final List<String> likeUserIds = [];
@@ -78,8 +82,6 @@ class Flap {
   int get reflapCount => reflapIds.length;
   int get replyCount => replyIds.length;
   int get likeCount => likeUserIds.length;
-
-  User get author => model.userById(authorId);
 
   bool get isReflap => originalFlapId != null;
   bool get isReply => previousFlapId != null;

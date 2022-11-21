@@ -31,7 +31,7 @@ class _ComposeDialogState extends State<ComposeDialog> {
 
   void post() async {
     var draft = DraftFlap.compose(
-      authorId: model.me!.id,
+      authorId: cache.userId!,
       content: textController.text,
     );
     // Immediately disable the publish button?
