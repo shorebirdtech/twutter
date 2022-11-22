@@ -19,8 +19,25 @@ class FlapHandler extends ShorebirdHandler {
       // verify session
       var draftJson = jsonDecode(await request.readAsString());
       var draft = DraftFlap.fromJson(draftJson);
-      await endpoint.post(RequestContext(), draft);
+      await endpoint.post(AuthenticatedContext(), draft);
       return Response.ok('OK');
+    });
+  }
+}
+
+class TimelineHandler extends ShorebirdHandler {
+  final TimelineEndpoint endpoint;
+
+  TimelineHandler(this.endpoint);
+
+  @override
+  void addRoutes(Router router) {
+    router.post('/timeline/latestFlapsSince', (Request request) async {
+      // verify session
+      var argsJson = jsonDecode(await request.readAsString());
+      var flaps = await endpoint.latestFlapsSince(AuthenticatedContext(),
+          sinceFlapId: argsJson['sinceFlapId'], maxCount: argsJson['maxCount']);
+      return Response.ok(jsonEncode(flaps));
     });
   }
 }

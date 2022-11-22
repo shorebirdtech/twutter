@@ -105,17 +105,17 @@ class BadgedIcon extends StatelessWidget {
 }
 
 class _HomeState extends State<Home> {
-  int _selectedScreenIndex = 0;
+  final int _selectedScreenIndex = 0;
 
-  void _onItemTapped(int index) {
-    setState(() {
-      _selectedScreenIndex = index;
-    });
-  }
+  // void _onItemTapped(int index) {
+  //   setState(() {
+  //     _selectedScreenIndex = index;
+  //   });
+  // }
 
   @override
   Widget build(BuildContext context) {
-    var store = StoreState.of(context);
+    var store = Store.of(context);
     if (store.authenticatedCache == null) {
       return const _Placeholder("Not logged in?");
     }
@@ -124,7 +124,7 @@ class _HomeState extends State<Home> {
     final List<Screen> screens = <Screen>[
       Screen(
         title: "Timeline",
-        body: const Timeline(),
+        body: Timeline(viewModel: TimelineViewModel.from(context)),
         appBarTitleOverride: const Icon(Icons.flutter_dash),
         floatingActionButton: const _ComposeFloatingActionButton(),
         navigationIcon: BadgedIcon(Icons.home, hasBadge: cache.hasUnreadFlaps),
@@ -165,15 +165,15 @@ class _HomeState extends State<Home> {
       ),
       body: selectedScreen.body,
       floatingActionButton: selectedScreen.floatingActionButton,
-      bottomNavigationBar: BottomNavigationBar(
-        items: screens
-            .map((e) =>
-                BottomNavigationBarItem(icon: e.navigationIcon, label: e.title))
-            .toList(),
-        currentIndex: _selectedScreenIndex,
-        selectedItemColor: Colors.amber[800],
-        onTap: _onItemTapped,
-      ),
+      // bottomNavigationBar: BottomNavigationBar(
+      //   items: screens
+      //       .map((e) =>
+      //           BottomNavigationBarItem(icon: e.navigationIcon, label: e.title))
+      //       .toList(),
+      //   currentIndex: _selectedScreenIndex,
+      //   selectedItemColor: Colors.amber[800],
+      //   onTap: _onItemTapped,
+      // ),
     );
   }
 }

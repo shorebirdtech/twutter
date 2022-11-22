@@ -29,7 +29,7 @@ class _ComposeDialogState extends State<ComposeDialog> {
   }
 
   void post() async {
-    var store = StoreState.of(context);
+    var store = StateScope.of(context);
 
     var draft = DraftFlap.compose(
       authorId: store.authenticatedCache!.user.id,

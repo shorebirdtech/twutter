@@ -1,18 +1,53 @@
 import 'package:flutter/material.dart';
 import 'package:twutter/src/view/config.dart';
 
+import '../model/flap.dart';
 import '../state.dart';
 import 'flap.dart';
 
-class _EmptyTimeline extends StatelessWidget {
-  const _EmptyTimeline();
+// Is this just AsyncSnapshot<List<Flap>>?
+// Connection.of(context).latestFlapsSince(0)
+// connection.getLastestFlaps -> Stream<List<Flap>>
+// then you can have a generic converter from Stream<Foo> to AsyncSnapshot<Foo> (which we call StreamBuilder).
 
-  void queueRefresh() {
-    // Refresh status
-    // In progress
-    // Failed
-    // Completed
+class TimelineViewModel {
+  final List<Flap> flaps;
+  // Scroll state?
+  final bool loading;
+  final bool error;
+  final VoidCallback onRefresh;
+
+  factory TimelineViewModel.from(BuildContext context) {
+    var state = Store.of(context);
+    var cache = state.authenticatedCache!;
+    return TimelineViewModel(
+      flaps: cache.latestFlaps,
+      loading: cache.isRefreshingTimeline,
+      error: cache.lastTimelineError != null,
+      onRefresh: state.actions.refreshTimeline,
+    );
   }
+
+  const TimelineViewModel({
+    required this.flaps,
+    required this.loading,
+    required this.error,
+    required this.onRefresh,
+  });
+}
+
+// Needed in the "handle-event" upwards phase.
+// Actions.of(context).refreshTimeline()
+// --- or ---
+// Actions.of(context).add(RefreshTimeline())
+
+// extension TimelineActions on Actions {
+//   xxxx
+// }
+
+class _EmptyTimeline extends StatelessWidget {
+  final VoidCallback onRefresh;
+  const _EmptyTimeline({required this.onRefresh});
 
   @override
   Widget build(BuildContext context) {
@@ -21,7 +56,7 @@ class _EmptyTimeline extends StatelessWidget {
     return Column(
       children: [
         ElevatedButton(
-          onPressed: queueRefresh,
+          onPressed: onRefresh,
           child: const Text("Refresh"),
         ),
         const Text("Welcome to your timeline!",
@@ -35,21 +70,20 @@ class _EmptyTimeline extends StatelessWidget {
 }
 
 class Timeline extends StatelessWidget {
-  const Timeline({super.key});
+  final TimelineViewModel viewModel;
+  const Timeline({super.key, required this.viewModel});
 
   @override
   Widget build(BuildContext context) {
-    var store = StoreState.of(context);
-    var latestFlaps = store.authenticatedCache!.latestFlaps;
     return SizedBox(
       width: LayoutConfig.timelineWidth,
-      child: latestFlaps.isEmpty
-          ? const _EmptyTimeline()
+      child: viewModel.flaps.isEmpty
+          ? _EmptyTimeline(onRefresh: viewModel.onRefresh)
           : ListView.separated(
               itemBuilder: ((context, index) {
-                return FlapView(flap: latestFlaps[index]);
+                return FlapView(flap: viewModel.flaps[index]);
               }),
-              itemCount: latestFlaps.length,
+              itemCount: viewModel.flaps.length,
               separatorBuilder: (context, index) => const Divider(),
               physics: const AlwaysScrollableScrollPhysics(),
             ),

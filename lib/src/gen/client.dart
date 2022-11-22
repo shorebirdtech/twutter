@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'dart:io';
 
+import 'package:flutter/cupertino.dart';
 import 'package:http/http.dart' as http;
 import 'package:twutter/src/model/flap.dart';
 import 'package:twutter/src/model/user.dart';
@@ -15,14 +16,12 @@ class LoginResult {
   const LoginResult.success(AuthResponse this.auth) : error = null;
 }
 
+@immutable
 class Connection {
-  final String baseUrl = 'http://localhost:8080';
+  final String baseUrl;
+  final String? sessionId;
 
-  String? _sessionId;
-
-  void setSessionId(String sessionId) {
-    _sessionId = sessionId;
-  }
+  const Connection({this.baseUrl = 'http://localhost:8080', this.sessionId});
 
   // Should use our own Response type.
   Future<http.Response> post(String path, Map<String, dynamic> body) async {
@@ -31,31 +30,51 @@ class Connection {
       'Content-Type': 'application/json',
       'Accept': 'application/json',
     };
-    if (_sessionId != null) {
-      headers['X-Session-Id'] = _sessionId!;
+    if (sessionId != null) {
+      headers['X-Session-Id'] = sessionId!;
     }
     return await http.post(url, headers: headers, body: jsonEncode(body));
   }
+
+  Connection copyWith({String? sessionId}) {
+    return Connection(baseUrl: baseUrl, sessionId: sessionId);
+  }
 }
 
+@immutable
 class Client {
   final Connection connection;
-  Client(this.connection);
+  const Client(this.connection);
 }
 
-class FlapClient extends Client {
-  FlapClient(super.connection);
-
+extension FlapClient on Connection {
   Future<void> publish(DraftFlap draft) async {
-    var response = await connection.post('flap/post', draft.toJson());
+    var response = await post('flap/post', draft.toJson());
     if (response.statusCode != HttpStatus.ok) {
       throw Exception('Failed to publish flap');
     }
   }
 }
 
+class TimelineClient extends Client {
+  const TimelineClient(super.connection);
+
+  Future<List<Flap>> latestFlapsSince(
+      {required String sinceFlapId, int maxCount = 50}) async {
+    var response = await connection.post('timeline/latestFlapsSince', {
+      'sinceFlapId': sinceFlapId,
+      'maxCount': maxCount,
+    });
+    if (response.statusCode != HttpStatus.ok) {
+      throw Exception('Failed to get latest flaps');
+    }
+    var json = jsonDecode(response.body);
+    return (json as List).map((e) => Flap.fromJson(e)).toList();
+  }
+}
+
 class AuthClient extends Client {
-  AuthClient(super.connection);
+  const AuthClient(super.connection);
 
   // Future<User> whoAmI() async {
   //   var response = await sessionPost('users/whoami', {});
@@ -81,8 +100,10 @@ class ClientRoot {
   final Connection connection;
   final FlapClient flap;
   final AuthClient auth;
+  final TimelineClient timeline;
 
   ClientRoot(this.connection)
       : flap = FlapClient(connection),
-        auth = AuthClient(connection);
+        auth = AuthClient(connection),
+        timeline = TimelineClient(connection);
 }

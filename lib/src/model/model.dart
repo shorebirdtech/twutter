@@ -5,29 +5,30 @@ import 'user.dart';
 // Client's view of the datastore?
 // Should be per-user.
 
-class AuthenticatedCache {
-  User user;
-  AuthenticatedCache(this.user) {
-    _userCache[user.id] = user;
-  }
+// class AuthenticatedCache {
+//   User user;
+//   AuthenticatedCache(this.user) {
+//     _userCache[user.id] = user;
+//   }
 
-  final Map<String, User> _userCache = {};
-  User? userById(String id) => _userCache[id];
+//   final Map<String, User> _userCache = {};
+//   User? userById(String id) => _userCache[id];
 
-  final Map<String, Flap> _flapCache = {};
-  Flap? flapById(String id) => _flapCache[id];
+//   final Map<String, Flap> _flapCache = {};
+//   Flap? flapById(String id) => _flapCache[id];
 
-  bool isRefreshingTimeline = false;
-  bool hasUnreadFlaps = false;
-  List<Flap> latestFlaps = [];
+//   bool isRefreshingTimeline = false;
+//   String? lastTimelineError;
+//   bool hasUnreadFlaps = false;
+//   List<Flap> latestFlaps = [];
 
-  List<NotificationGroup> notifications = [];
+//   List<NotificationGroup> notifications = [];
 
-  // // Drafts should be persisted to disk?
-  // List<DraftFlap> drafts = [];
+//   // // Drafts should be persisted to disk?
+//   // List<DraftFlap> drafts = [];
 
-  bool hasNewMessages = false;
-}
+//   bool hasNewMessages = false;
+// }
 
 // var model = DummyStoreBuilder().build();
 

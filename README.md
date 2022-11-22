@@ -7,6 +7,9 @@ Using Twitter as an example to demonstrate what a front-to-back app
 built on Shorebird could look like.
 
 ## Burndown List
+- Move everything into Connection
+- Delete Caching layer.
+- Just http request for everything.
 - Make it possible to refresh timeline.
 - Publish to web via github hook?
 - Remove real people names.
@@ -29,8 +32,16 @@ App should act as though everything is local, with many requests being
 async and failable.  The server should be able to run on the phone or in
 the cloud and it not matter.
 
+
 Views reach through to model which caches or requests from client as necessary.
 
+
+
+* View layer
+* Data layer
+* Connection management layer
+
+* Want a data layer that can just store Dart objects.
 
 
 # Questions?

@@ -10,7 +10,7 @@ class TwutterApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return StoreState(
+    return ModelBinding(
         child: MaterialApp(
       title: 'Twutter',
       theme: ThemeData.dark().copyWith(

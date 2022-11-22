@@ -81,8 +81,8 @@ class TimelineEndpoint extends Endpoint {
   //   return latestFlapsSince(context, flapId, 1).isNotEmpty;
   // }
 
-  Future<List<Flap>> latestFlapsSince(
-      AuthenticatedContext context, String flapId, int maxCount) async {
+  Future<List<Flap>> latestFlapsSince(AuthenticatedContext context,
+      {required String sinceFlapId, required int maxCount}) async {
     // var session = SessionController.of(context);
     // Load the last 100 flaps.
     // Look for the flap id, if it's not present, assume we have newer
@@ -90,7 +90,8 @@ class TimelineEndpoint extends Endpoint {
 
     const int maxFlaps = 100;
     var flaps = await dataStore.mostRecentFlaps(maxFlaps);
-    var lastSeenIndex = flaps.indexWhere((element) => element.id == flapId);
+    var lastSeenIndex =
+        flaps.indexWhere((element) => element.id == sinceFlapId);
     if (lastSeenIndex == -1) {
       return flaps.lastN(maxCount);
     }

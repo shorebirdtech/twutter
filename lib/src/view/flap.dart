@@ -59,7 +59,7 @@ class FlapView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    var store = StoreState.of(context);
+    var store = StateScope.of(context);
     // Is profile visibility per-user?  Can this just use a global cache?
     var author = store.authenticatedCache!.userById(flap.authorId)!;
     var authorLine = Row(
