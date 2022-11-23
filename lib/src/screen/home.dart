@@ -2,7 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:twutter/src/view/avatar.dart';
 import 'package:twutter/src/view/config.dart';
 
-import '../state.dart';
+import '../gen/client.dart';
+import '../model/user.dart';
 import '../view/timeline.dart';
 
 class Home extends StatefulWidget {
@@ -30,19 +31,19 @@ class Screen {
   Widget get appBarTitle => appBarTitleOverride ?? Text(title);
 }
 
-class _Placeholder extends StatelessWidget {
-  final String title;
+// class _Placeholder extends StatelessWidget {
+//   final String title;
 
-  const _Placeholder(this.title);
+//   const _Placeholder(this.title);
 
-  @override
-  Widget build(BuildContext context) {
-    return Center(
-      child: Text(title,
-          style: const TextStyle(fontSize: 30, fontWeight: FontWeight.bold)),
-    );
-  }
-}
+//   @override
+//   Widget build(BuildContext context) {
+//     return Center(
+//       child: Text(title,
+//           style: const TextStyle(fontSize: 30, fontWeight: FontWeight.bold)),
+//     );
+//   }
+// }
 
 class _ComposeFloatingActionButton extends StatelessWidget {
   const _ComposeFloatingActionButton();
@@ -105,29 +106,30 @@ class BadgedIcon extends StatelessWidget {
 }
 
 class _HomeState extends State<Home> {
-  int _selectedScreenIndex = 0;
+  final int _selectedScreenIndex = 0;
 
-  void _onItemTapped(int index) {
-    setState(() {
-      _selectedScreenIndex = index;
-    });
-  }
+  // void _onItemTapped(int index) {
+  //   setState(() {
+  //     _selectedScreenIndex = index;
+  //   });
+  // }
 
   @override
   Widget build(BuildContext context) {
-    var store = StoreState.of(context);
-    if (store.authenticatedCache == null) {
-      return const _Placeholder("Not logged in?");
-    }
-    var cache = store.authenticatedCache!;
+    var client = Client.of(context);
 
     final List<Screen> screens = <Screen>[
-      Screen(
+      const Screen(
         title: "Timeline",
-        body: const Timeline(),
-        appBarTitleOverride: const Icon(Icons.flutter_dash),
-        floatingActionButton: const _ComposeFloatingActionButton(),
-        navigationIcon: BadgedIcon(Icons.home, hasBadge: cache.hasUnreadFlaps),
+        body: Timeline(),
+        appBarTitleOverride: Icon(Icons.flutter_dash),
+        floatingActionButton: _ComposeFloatingActionButton(),
+        // navigationIcon: ValueListenableBuilder<bool>(
+        //   builder: (BuildContext context, bool hasBadge, Widget? child) =>
+        //       BadgedIcon(Icons.home, hasBadge: hasBadge),
+        //   valueListenable: client.hasUnreadFlaps,
+        // ),
+        navigationIcon: Icon(Icons.home),
       ),
       // const Screen(
       //   title: "Search",
@@ -158,22 +160,26 @@ class _HomeState extends State<Home> {
         leading: Padding(
           padding: const EdgeInsets.fromLTRB(
               LayoutConfig.timelineHorizontalPadding, 0, 20, 0),
-          child: AvatarView(user: cache.user),
+          child: ValueListenableBuilder<User?>(
+            builder: (BuildContext context, User? user, Widget? child) =>
+                AvatarView(user: user ?? const User.empty()),
+            valueListenable: client.user,
+          ),
         ), // Decide what logged out behavior is?
         title: selectedScreen.appBarTitle,
         centerTitle: true,
       ),
       body: selectedScreen.body,
       floatingActionButton: selectedScreen.floatingActionButton,
-      bottomNavigationBar: BottomNavigationBar(
-        items: screens
-            .map((e) =>
-                BottomNavigationBarItem(icon: e.navigationIcon, label: e.title))
-            .toList(),
-        currentIndex: _selectedScreenIndex,
-        selectedItemColor: Colors.amber[800],
-        onTap: _onItemTapped,
-      ),
+      // bottomNavigationBar: BottomNavigationBar(
+      //   items: screens
+      //       .map((e) =>
+      //           BottomNavigationBarItem(icon: e.navigationIcon, label: e.title))
+      //       .toList(),
+      //   currentIndex: _selectedScreenIndex,
+      //   selectedItemColor: Colors.amber[800],
+      //   onTap: _onItemTapped,
+      // ),
     );
   }
 }

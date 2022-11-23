@@ -1,18 +1,25 @@
 import 'package:flutter/material.dart';
 import 'package:twutter/src/view/config.dart';
 
-import '../state.dart';
+import '../gen/client.dart';
 import 'flap.dart';
+
+// Is this just AsyncSnapshot<List<Flap>>?
+// Connection.of(context).latestFlapsSince(0)
+// connection.getLastestFlaps -> Stream<List<Flap>>
+// then you can have a generic converter from Stream<Foo> to AsyncSnapshot<Foo> (which we call StreamBuilder).
+
+// Needed in the "handle-event" upwards phase.
+// Actions.of(context).refreshTimeline()
+// --- or ---
+// Actions.of(context).add(RefreshTimeline())
+
+// extension TimelineActions on Actions {
+//   xxxx
+// }
 
 class _EmptyTimeline extends StatelessWidget {
   const _EmptyTimeline();
-
-  void queueRefresh() {
-    // Refresh status
-    // In progress
-    // Failed
-    // Completed
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -21,7 +28,7 @@ class _EmptyTimeline extends StatelessWidget {
     return Column(
       children: [
         ElevatedButton(
-          onPressed: queueRefresh,
+          onPressed: () => Client.of(context).actions.refreshTimeline(),
           child: const Text("Refresh"),
         ),
         const Text("Welcome to your timeline!",
@@ -39,20 +46,28 @@ class Timeline extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    var store = StoreState.of(context);
-    var latestFlaps = store.authenticatedCache!.latestFlaps;
+    // This should show always show cached flaps?
+    // And status of current fetch request?
+    // CachedFlap would have the User always associated?
+    // Where is the scroll position cached?
+    var client = Client.of(context);
     return SizedBox(
       width: LayoutConfig.timelineWidth,
-      child: latestFlaps.isEmpty
-          ? const _EmptyTimeline()
-          : ListView.separated(
-              itemBuilder: ((context, index) {
-                return FlapView(flap: latestFlaps[index]);
-              }),
-              itemCount: latestFlaps.length,
-              separatorBuilder: (context, index) => const Divider(),
-              physics: const AlwaysScrollableScrollPhysics(),
-            ),
+      child: ValueListenableBuilder<List<CachedFlap>>(
+        valueListenable: client.cachedFlaps,
+        builder: (context, cachedFlaps, child) {
+          if (cachedFlaps.isEmpty) {
+            return const _EmptyTimeline();
+          }
+          return ListView.separated(
+            itemCount: cachedFlaps.length,
+            itemBuilder: (context, index) =>
+                FlapView(cachedFlap: cachedFlaps[index]),
+            separatorBuilder: (context, index) => const Divider(),
+            physics: const AlwaysScrollableScrollPhysics(),
+          );
+        },
+      ),
     );
   }
 }

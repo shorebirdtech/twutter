@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:twutter/src/gen/client.dart';
 import 'package:twutter/src/view/avatar.dart';
 
-import '../model/flap.dart';
-import '../state.dart';
 import 'config.dart';
 import 'theme.dart';
 import 'user.dart';
@@ -40,9 +39,9 @@ class FlapControl extends StatelessWidget {
 }
 
 class FlapView extends StatelessWidget {
-  final Flap flap;
+  final CachedFlap cachedFlap;
 
-  const FlapView({super.key, required this.flap});
+  const FlapView({super.key, required this.cachedFlap});
 
   String timeSince(DateTime time) {
     var since = DateTime.now().difference(time);
@@ -59,16 +58,16 @@ class FlapView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    var store = StoreState.of(context);
-    // Is profile visibility per-user?  Can this just use a global cache?
-    var author = store.authenticatedCache!.userById(flap.authorId)!;
+    // Flap should come with the User pre-loaded, or at least partially.
+    var flap = cachedFlap.flap;
+    var author = cachedFlap.author;
     var authorLine = Row(
       mainAxisAlignment: MainAxisAlignment.start,
       children: [
         ...author.verifiedName,
         const Text(' '),
         Text(
-          author.handle,
+          author.username,
           style: TwutterTheme.backgroundText(context),
         ),
         const Text(' \u2022 '),

@@ -19,8 +19,53 @@ class FlapHandler extends ShorebirdHandler {
       // verify session
       var draftJson = jsonDecode(await request.readAsString());
       var draft = DraftFlap.fromJson(draftJson);
-      await endpoint.post(RequestContext(), draft);
+      await endpoint.post(AuthenticatedContext(), draft);
       return Response.ok('OK');
+    });
+  }
+}
+
+class TimelineHandler extends ShorebirdHandler {
+  final TimelineEndpoint endpoint;
+
+  TimelineHandler(this.endpoint);
+
+  @override
+  void addRoutes(Router router) {
+    router.post('/timeline/latestFlapsSince', (Request request) async {
+      // verify session
+      var argsJson = jsonDecode(await request.readAsString());
+      var flaps = await endpoint.latestFlapsSince(AuthenticatedContext(),
+          sinceFlapId: argsJson['sinceFlapId'], maxCount: argsJson['maxCount']);
+      return Response.ok(jsonEncode(flaps));
+    });
+  }
+}
+
+class UserHandler extends ShorebirdHandler {
+  final UserEndpoint endpoint;
+
+  UserHandler(this.endpoint);
+
+  @override
+  void addRoutes(Router router) {
+    router.post('/user/userById', (Request request) async {
+      // verify session
+      var argsJson = jsonDecode(await request.readAsString());
+      var user = await endpoint.userById(
+        AuthenticatedContext(),
+        argsJson['userId'],
+      );
+      return Response.ok(jsonEncode(user));
+    });
+    router.post('/user/userByUsername', (Request request) async {
+      // verify session
+      var argsJson = jsonDecode(await request.readAsString());
+      var user = await endpoint.userByUsername(
+        AuthenticatedContext(),
+        argsJson['username'],
+      );
+      return Response.ok(jsonEncode(user));
     });
   }
 }

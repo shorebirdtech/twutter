@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:twutter/src/model/flap.dart';
 
-import '../state.dart';
+import '../gen/client.dart';
 import 'button.dart';
 import 'config.dart';
 
@@ -29,10 +29,9 @@ class _ComposeDialogState extends State<ComposeDialog> {
   }
 
   void post() async {
-    var store = StoreState.of(context);
-
+    var client = Client.of(context);
     var draft = DraftFlap.compose(
-      authorId: store.authenticatedCache!.user.id,
+      authorId: client.user.value!.id,
       content: textController.text,
     );
     // Immediately disable the publish button?
@@ -40,7 +39,7 @@ class _ComposeDialogState extends State<ComposeDialog> {
     // Validate the draft.
     // Send to the server.
     try {
-      await store.client.flap.publish(draft);
+      await client.actions.publish(draft);
       closeComposeWindow();
     } catch (e) {
       // Show an error message.
