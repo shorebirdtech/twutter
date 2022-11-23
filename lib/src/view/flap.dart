@@ -67,7 +67,7 @@ class FlapView extends StatelessWidget {
         ...author.verifiedName,
         const Text(' '),
         Text(
-          author.handle,
+          author.username,
           style: TwutterTheme.backgroundText(context),
         ),
         const Text(' \u2022 '),

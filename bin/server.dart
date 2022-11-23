@@ -11,6 +11,7 @@ void main() async {
     FlapHandler(FlapEndpoint()),
     AuthHandler(AuthEndpoint()),
     TimelineHandler(TimelineEndpoint()),
+    UserHandler(UserEndpoint()),
   ];
   var server = Server();
   await server.serve(handlers, 'localhost', 8080);

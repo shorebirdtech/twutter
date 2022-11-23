@@ -42,6 +42,34 @@ class TimelineHandler extends ShorebirdHandler {
   }
 }
 
+class UserHandler extends ShorebirdHandler {
+  final UserEndpoint endpoint;
+
+  UserHandler(this.endpoint);
+
+  @override
+  void addRoutes(Router router) {
+    router.post('/user/userById', (Request request) async {
+      // verify session
+      var argsJson = jsonDecode(await request.readAsString());
+      var user = await endpoint.userById(
+        AuthenticatedContext(),
+        argsJson['userId'],
+      );
+      return Response.ok(jsonEncode(user));
+    });
+    router.post('/user/userByUsername', (Request request) async {
+      // verify session
+      var argsJson = jsonDecode(await request.readAsString());
+      var user = await endpoint.userByUsername(
+        AuthenticatedContext(),
+        argsJson['username'],
+      );
+      return Response.ok(jsonEncode(user));
+    });
+  }
+}
+
 class AuthHandler extends ShorebirdHandler {
   final AuthEndpoint endpoint;
 

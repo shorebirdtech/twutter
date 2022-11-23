@@ -33,9 +33,9 @@ class DummyStoreBuilder {
 
   Future<Flap> flapWithId(String id) async => store.flapById(id);
 
-  Future<User> createUser(String displayName, String handle,
+  Future<User> createUser(String displayName, String username,
       {bool isVerified = false, bool isOfficial = false}) async {
-    var signUp = SignUp(displayName: displayName, handle: handle);
+    var signUp = SignUp(displayName: displayName, username: username);
     return await store.createUser(signUp);
   }
 

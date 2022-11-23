@@ -119,6 +119,11 @@ class UserEndpoint extends Endpoint {
   Future<User> userById(AuthenticatedContext context, String userId) async {
     return await DataStore.of(context).userById(userId);
   }
+
+  Future<User> userByUsername(
+      AuthenticatedContext context, String username) async {
+    return await DataStore.of(context).userByUsername(username);
+  }
 }
 
 class AuthEndpoint extends Endpoint {
@@ -128,9 +133,13 @@ class AuthEndpoint extends Endpoint {
     // Validate the user.
     // Create a session.
     // Set the session cookie.
+    var user = await DataStore.of(context).userByUsername(credentials.username);
+    if (user == null) {
+      throw Exception("User not found");
+    }
     return AuthResponse(
       sessionId: '1',
-      user: const User(id: '0', displayName: 'Eric Seidel', handle: '_eseidel'),
+      user: user,
     );
   }
 }

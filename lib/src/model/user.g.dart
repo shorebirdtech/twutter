@@ -29,7 +29,7 @@ Map<String, dynamic> _$AuthResponseToJson(AuthResponse instance) =>
 User _$UserFromJson(Map<String, dynamic> json) => User(
       id: json['id'] as String,
       displayName: json['displayName'] as String,
-      handle: json['handle'] as String,
+      username: json['username'] as String,
       official: json['official'] as bool? ?? false,
       verified: json['verified'] as bool? ?? false,
     );
@@ -37,7 +37,7 @@ User _$UserFromJson(Map<String, dynamic> json) => User(
 Map<String, dynamic> _$UserToJson(User instance) => <String, dynamic>{
       'id': instance.id,
       'displayName': instance.displayName,
-      'handle': instance.handle,
+      'username': instance.username,
       'official': instance.official,
       'verified': instance.verified,
     };

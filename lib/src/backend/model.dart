@@ -70,6 +70,16 @@ class DataStore {
     return User.fromJson(userJson);
   }
 
+  Future<User> userByUsername(String username) async {
+    var store = stringMapStoreFactory.store('users');
+    var finder = Finder(filter: Filter.equals('username', username), limit: 1);
+    var users = await store.find(db, finder: finder);
+    if (users.isEmpty) {
+      throw "User not found";
+    }
+    return User.fromJson(users.first.value);
+  }
+
   Future<User> createUser(SignUp signUp) async {
     var store = stringMapStoreFactory.store('users');
     var user = User.fromSignUp(signUp);
