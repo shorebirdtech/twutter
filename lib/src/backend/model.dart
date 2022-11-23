@@ -29,10 +29,14 @@ class DataStore {
     return Flap.fromJson(flapRecord);
   }
 
-  Future<void> createFlap(Flap flap) async {
-    var store = stringMapStoreFactory.store('flaps');
-    // We generate the flap id outside of the database.
-    await store.record(flap.id).add(db, flap.toJson());
+  Future<Flap> createFlap(Flap flap) async {
+    return await db.transaction((txn) async {
+      var store = stringMapStoreFactory.store('flaps');
+      var id = await store.add(txn, flap.toJson());
+      var flapWithId = flap.copyWith(id: id);
+      await store.record(id).update(txn, flapWithId.toJson());
+      return flapWithId;
+    });
   }
 
   Future<void> updateFlap(String flapId, Function(Flap flap) update) async {
@@ -80,11 +84,14 @@ class DataStore {
     return User.fromJson(users.first.value);
   }
 
-  Future<User> createUser(SignUp signUp) async {
-    var store = stringMapStoreFactory.store('users');
-    var user = User.fromSignUp(signUp);
-    await store.record(user.id).add(db, user.toJson());
-    return user;
+  Future<User> createUser(User user) async {
+    return await db.transaction((txn) async {
+      var store = stringMapStoreFactory.store('users');
+      var id = await store.add(txn, user.toJson());
+      var withId = user.copyWith(id: id);
+      await store.record(id).update(txn, withId.toJson());
+      return withId;
+    });
   }
 
   // // This should just return a lazy object rather than filling it.

@@ -7,19 +7,16 @@ Using Twitter as an example to demonstrate what a front-to-back app
 built on Shorebird could look like.
 
 ## Burndown List
-- Move everything into Connection
-- Delete Caching layer.
-- Just http request for everything.
-- Make it possible to refresh timeline.
 - Publish to web via github hook?
-- Remove real people names.
-- Add Likes
-- Add Reflaps
 - Figure out images.
+- Add separate type for DatabaseId for Flaps, Users, etc.
+- Add pull-to-refresh to timeline page
 - Add notifications
-- Add Search
 - Add Profile pages
 - Make it possible to follow/unfollow.
+- Add Likes
+- Add Reflaps
+- Add Search
 
 # Arch
 Client holds open an EventSource connection to the server to receive
@@ -40,6 +37,7 @@ Views reach through to model which caches or requests from client as necessary.
 * View layer
 * Data layer
 * Connection management layer
+Is this just Model View Controller?
 
 * Want a data layer that can just store Dart objects.
 
@@ -58,3 +56,6 @@ Error thrown by handler.
 type 'Null' is not a subtype of type 'FutureOr<Response>'
 package:shelf/src/middleware/logger.dart 30:62  logRequests.<fn>.<fn>.<fn>
 * When you make a change to the server you want both it and the client to hotreload.
+* No support for renaming fields in database.
+* Want to see the output from client and server in one log?
+* Sembast methods will happily accept 'db' (instead of 'txn') inside a transcation callback and then just hang.  Need some sort of lint to catch that.

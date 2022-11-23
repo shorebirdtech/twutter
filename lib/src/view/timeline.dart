@@ -26,15 +26,11 @@ class _EmptyTimeline extends StatelessWidget {
     // Twitter has some fancier text here:
     // https://twitter.com/hanumpra/status/1243762509556748289
     return Column(
-      children: [
-        ElevatedButton(
-          onPressed: () => Client.of(context).actions.refreshTimeline(),
-          child: const Text("Refresh"),
-        ),
-        const Text("Welcome to your timeline!",
+      children: const [
+        Text("Welcome to your timeline!",
             style: TextStyle(fontSize: 30, fontWeight: FontWeight.bold)),
-        const SizedBox(height: 20),
-        const Text("When you follow people, their Flaps will show up here.",
+        SizedBox(height: 20),
+        Text("When you follow people, their Flaps will show up here.",
             style: TextStyle(fontSize: 20, fontWeight: FontWeight.normal)),
       ],
     );

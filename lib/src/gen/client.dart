@@ -49,7 +49,13 @@ class Client {
     if (sessionId != null) {
       headers['X-Session-Id'] = sessionId!;
     }
-    return await http.post(url, headers: headers, body: jsonEncode(body));
+    return await http
+        .post(
+          url,
+          headers: headers,
+          body: jsonEncode(body),
+        )
+        .timeout(const Duration(seconds: 5));
   }
 
   static Client of(BuildContext context) {
@@ -177,6 +183,9 @@ class Actions {
       var author = await client.userById(flap.authorId);
       flaps.add(CachedFlap(flap, author));
     }
+    // cachedFlaps should always be kept in reverse chronological order.
+    // Later we may need to insert/remove flaps from the sorted list.
+    flaps.sort((a, b) => b.flap.createdAt.compareTo(a.flap.createdAt));
     client.cachedFlaps.value = flaps;
   }
 

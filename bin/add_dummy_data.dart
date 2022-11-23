@@ -15,12 +15,13 @@ class StoreAdaptor {
   Future<User> userById(String userId) => _store.userById(userId);
   Future<Flap> flapById(String flapId) => _store.flapById(flapId);
 
-  Future<void> createFlap(Flap flap) async {
-    await _store.createFlap(flap);
-    lastFlapCreated = flap;
+  Future<Flap> createFlap(Flap flap) async {
+    lastFlapCreated = await _store.createFlap(flap);
+    return lastFlapCreated!;
   }
 
-  Future<User> createUser(SignUp signUp) => _store.createUser(signUp);
+  Future<User> createUser(SignUp signUp) =>
+      _store.createUser(User.fromSignUp(signUp));
 
   Flap previousFlap() => lastFlapCreated!;
 }
@@ -28,8 +29,6 @@ class StoreAdaptor {
 class DummyStoreBuilder {
   final StoreAdaptor store;
   DummyStoreBuilder(this.store);
-
-  int lastId = 0;
 
   Future<Flap> flapWithId(String id) async => store.flapById(id);
 
@@ -50,12 +49,11 @@ class DummyStoreBuilder {
 
   Future<void> addFlap(DraftFlap draft, DateTime createdAt) async {
     validate(draft, createdAt);
-    var flap = Flap.fromDraft(draft, createdAt, genId());
+    var flap = Flap.fromDraft(draft, createdAt);
     await store.createFlap(flap);
   }
 
   Flap previousFlap() => store.previousFlap();
-  String genId() => (lastId++).toString();
 
   Future<void> flap(User author, String content, DateTime createdAt) async {
     var flap = DraftFlap.compose(

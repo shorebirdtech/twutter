@@ -99,12 +99,24 @@ class Flap {
       this.originalFlapId,
       this.isPromoted = false});
 
-  Flap.fromDraft(DraftFlap draft, this.createdAt, this.id)
-      : authorId = draft.authorId,
+  Flap.fromDraft(DraftFlap draft, this.createdAt)
+      : id = '', // Will be set by the database.
+        authorId = draft.authorId,
         content = draft.content,
         previousFlapId = draft.previousFlapId,
         originalFlapId = draft.originalFlapId,
         isPromoted = draft.isPromoted;
+
+  Flap copyWith({String? id}) {
+    return Flap(
+        id: id ?? this.id,
+        authorId: authorId,
+        content: content,
+        createdAt: createdAt,
+        previousFlapId: previousFlapId,
+        originalFlapId: originalFlapId,
+        isPromoted: isPromoted);
+  }
 
   factory Flap.fromJson(Map<String, dynamic> json) => _$FlapFromJson(json);
 

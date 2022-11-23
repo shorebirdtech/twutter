@@ -28,6 +28,32 @@ class _ComposeDialogState extends State<ComposeDialog> {
     Navigator.of(context).pop();
   }
 
+  Future<bool> showRetryDialog() async {
+    return await showDialog<bool>(
+          context: context,
+          builder: (BuildContext context) => AlertDialog(
+            title: const Text('Flap not sent'),
+            content: const Text(
+                "We're sorry, we weren't able to send your Flap. Would you like to retry?"), // or save this Flap in drafts?
+            actions: [
+              // TextButton(
+              //   onPressed: () => Navigator.of(context).pop(),
+              //   child: const Text('Go to drafts'),
+              // ),
+              TextButton(
+                onPressed: () => Navigator.of(context).pop(true),
+                child: const Text('Retry'),
+              ),
+              TextButton(
+                onPressed: () => Navigator.of(context).pop(false),
+                child: const Text('OK'),
+              ),
+            ],
+          ),
+        ) ??
+        false;
+  }
+
   void post() async {
     var client = Client.of(context);
     var draft = DraftFlap.compose(
@@ -38,34 +64,18 @@ class _ComposeDialogState extends State<ComposeDialog> {
     // Show a spinner? (Or maybe timeout so short it doesn't matter?)
     // Validate the draft.
     // Send to the server.
-    try {
-      await client.actions.publish(draft);
-      closeComposeWindow();
-    } catch (e) {
-      // Show an error message.
-      // FIXME: This dialog doesn't work yet.
-      var result = await showDialog<String>(
-        context: context,
-        builder: (BuildContext context) => AlertDialog(
-          title: const Text('Flap not sent'),
-          content: const Text(
-              "We're sorry, we weren't able to send your Flap. Would you like to retry?"), // or save this Flap in drafts?
-          actions: [
-            // TextButton(
-            //   onPressed: () => Navigator.of(context).pop(),
-            //   child: const Text('Go to drafts'),
-            // ),
-            TextButton(
-              onPressed: () => Navigator.of(context).pop(),
-              child: const Text('Retry'),
-            ),
-            TextButton(
-              onPressed: () => Navigator.of(context).pop(),
-              child: const Text('OK'),
-            ),
-          ],
-        ),
-      );
+
+    while (true) {
+      try {
+        await client.actions.publish(draft);
+        closeComposeWindow();
+        break;
+      } catch (e) {
+        // Show an error message.
+        if (!await showRetryDialog()) {
+          break;
+        }
+      }
     }
   }
 

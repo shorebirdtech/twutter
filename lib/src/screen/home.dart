@@ -19,6 +19,7 @@ class Screen {
   final Widget body;
   final Widget floatingActionButton;
   final Widget navigationIcon;
+  final Widget? action;
 
   const Screen({
     required this.title,
@@ -26,6 +27,7 @@ class Screen {
     required this.body,
     required this.floatingActionButton,
     required this.navigationIcon,
+    this.action,
   });
 
   Widget get appBarTitle => appBarTitleOverride ?? Text(title);
@@ -119,18 +121,21 @@ class _HomeState extends State<Home> {
     var client = Client.of(context);
 
     final List<Screen> screens = <Screen>[
-      const Screen(
-        title: "Timeline",
-        body: Timeline(),
-        appBarTitleOverride: Icon(Icons.flutter_dash),
-        floatingActionButton: _ComposeFloatingActionButton(),
-        // navigationIcon: ValueListenableBuilder<bool>(
-        //   builder: (BuildContext context, bool hasBadge, Widget? child) =>
-        //       BadgedIcon(Icons.home, hasBadge: hasBadge),
-        //   valueListenable: client.hasUnreadFlaps,
-        // ),
-        navigationIcon: Icon(Icons.home),
-      ),
+      Screen(
+          title: "Timeline",
+          body: const Timeline(),
+          appBarTitleOverride: const Icon(Icons.flutter_dash),
+          floatingActionButton: const _ComposeFloatingActionButton(),
+          // navigationIcon: ValueListenableBuilder<bool>(
+          //   builder: (BuildContext context, bool hasBadge, Widget? child) =>
+          //       BadgedIcon(Icons.home, hasBadge: hasBadge),
+          //   valueListenable: client.hasUnreadFlaps,
+          // ),
+          navigationIcon: const Icon(Icons.home),
+          action: ElevatedButton(
+            onPressed: () => client.actions.refreshTimeline(),
+            child: const Text("Refresh"),
+          )),
       // const Screen(
       //   title: "Search",
       //   body: _Placeholder("Search"),
@@ -168,6 +173,9 @@ class _HomeState extends State<Home> {
         ), // Decide what logged out behavior is?
         title: selectedScreen.appBarTitle,
         centerTitle: true,
+        actions: [
+          if (selectedScreen.action != null) selectedScreen.action!,
+        ],
       ),
       body: selectedScreen.body,
       floatingActionButton: selectedScreen.floatingActionButton,

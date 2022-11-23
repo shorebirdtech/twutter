@@ -21,20 +21,10 @@ class SendNotificationsEndpoint extends Endpoint {
 }
 
 class FlapEndpoint extends Endpoint {
-  static int _nextFlapId = 0;
-
-  // The datastore should do this, and they won't be monotonoic
-  // https://firebase.google.com/docs/firestore/best-practices#hotspots
-  String nextFlapId() {
-    return (_nextFlapId++).toString();
-  }
-
-  // This should probably be a separate endpoint?
-
   Future<void> post(AuthenticatedContext context, DraftFlap draft) async {
     // Save the updated draft?
     // Create the flap from the draft.
-    var flap = Flap.fromDraft(draft, DateTime.now(), nextFlapId());
+    var flap = Flap.fromDraft(draft, DateTime.now());
     // Save the flap.
     await DataStore.of(context).createFlap(flap);
     // Delete the draft once confirmed?
@@ -134,9 +124,6 @@ class AuthEndpoint extends Endpoint {
     // Create a session.
     // Set the session cookie.
     var user = await DataStore.of(context).userByUsername(credentials.username);
-    if (user == null) {
-      throw Exception("User not found");
-    }
     return AuthResponse(
       sessionId: '1',
       user: user,

@@ -15,5 +15,6 @@ void main() async {
   ];
   var server = Server();
   await server.serve(handlers, 'localhost', 8080);
+  // ignore: avoid_print
   print('Serving at http://${server.address.host}:${server.port}');
 }
