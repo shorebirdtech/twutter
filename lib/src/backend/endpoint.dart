@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:shorebird/shorebird.dart';
 import 'package:twutter/src/model/user.dart';
 
@@ -34,7 +36,7 @@ class FlapEndpoint extends Endpoint {
     // Create the flap from the draft.
     var flap = Flap.fromDraft(draft, DateTime.now(), nextFlapId());
     // Save the flap.
-    await dataStore.createFlap(flap);
+    await DataStore.of(context).createFlap(flap);
     // Delete the draft once confirmed?
     // Alert followers of the flap.
     SendNotificationsEndpoint().sendPublishNotifications(flap.id);
@@ -46,7 +48,7 @@ class FlapEndpoint extends Endpoint {
   Future<void> like(AuthenticatedContext context, String flapId) async {
     // Save the like info on the flap.
     var session = Session.of(context);
-    await dataStore.updateFlap(flapId, (flap) {
+    await DataStore.of(context).updateFlap(flapId, (flap) {
       flap.likeUserIds.add(session.userId);
     });
     // Notify the author of the flap.
@@ -77,9 +79,12 @@ class TimelineEndpoint extends Endpoint {
   //   return flaps.lastN(count);
   // }
 
-  // bool haveFlapsSince(AuthenticatedContext context, String flapId) {
-  //   return latestFlapsSince(context, flapId, 1).isNotEmpty;
-  // }
+  Future<bool> haveFlapsSince(
+      AuthenticatedContext context, String flapId) async {
+    var flaps =
+        await latestFlapsSince(context, sinceFlapId: flapId, maxCount: 1);
+    return flaps.isNotEmpty;
+  }
 
   Future<List<Flap>> latestFlapsSince(AuthenticatedContext context,
       {required String sinceFlapId, required int maxCount}) async {
@@ -89,13 +94,14 @@ class TimelineEndpoint extends Endpoint {
     // and return the most recent maxCount.
 
     const int maxFlaps = 100;
-    var flaps = await dataStore.mostRecentFlaps(maxFlaps);
+    var flaps = await DataStore.of(context).mostRecentFlaps(maxFlaps);
     var lastSeenIndex =
         flaps.indexWhere((element) => element.id == sinceFlapId);
     if (lastSeenIndex == -1) {
       return flaps.lastN(maxCount);
     }
-    return flaps.sublist(lastSeenIndex + 1, lastSeenIndex + maxCount);
+    return flaps.sublist(
+        lastSeenIndex + 1, min(lastSeenIndex + maxCount, flaps.length));
   }
 
   // List<Flap> flapsDirectlyAfter(
@@ -107,6 +113,12 @@ class TimelineEndpoint extends Endpoint {
   //     AuthenticatedContext context, String flapId, int maxCount) {
   //   return <Flap>[];
   // }
+}
+
+class UserEndpoint extends Endpoint {
+  Future<User> userById(AuthenticatedContext context, String userId) async {
+    return await DataStore.of(context).userById(userId);
+  }
 }
 
 class AuthEndpoint extends Endpoint {

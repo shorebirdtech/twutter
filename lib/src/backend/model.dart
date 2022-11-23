@@ -1,14 +1,32 @@
 import 'package:sembast/sembast.dart';
 import 'package:sembast/sembast_io.dart';
+import 'package:shorebird/shorebird.dart';
 import 'package:twutter/src/model/flap.dart';
+import 'package:twutter/src/model/user.dart';
 
 class DataStore {
   late Database db;
+
+  DataStore();
+
+  static final DataStore _singleton = DataStore();
+  static DataStore get instance => _singleton;
+
+  factory DataStore.of(AuthenticatedContext context) => _singleton;
 
   Future<void> init() async {
     String dbPath = 'sample.db';
     DatabaseFactory dbFactory = databaseFactoryIo;
     db = await dbFactory.openDatabase(dbPath);
+  }
+
+  Future<Flap> flapById(String id) async {
+    var store = stringMapStoreFactory.store('flaps');
+    var flapRecord = await store.record(id).get(db);
+    if (flapRecord == null) {
+      throw Exception('Flap not found: $id');
+    }
+    return Flap.fromJson(flapRecord);
   }
 
   Future<void> createFlap(Flap flap) async {
@@ -43,6 +61,22 @@ class DataStore {
     return flaps.map((record) => Flap.fromJson(record.value)).toList();
   }
 
+  Future<User> userById(String userId) async {
+    var store = stringMapStoreFactory.store('users');
+    var userJson = await store.record(userId).get(db);
+    if (userJson == null) {
+      throw "User not found";
+    }
+    return User.fromJson(userJson);
+  }
+
+  Future<User> createUser(SignUp signUp) async {
+    var store = stringMapStoreFactory.store('users');
+    var user = User.fromSignUp(signUp);
+    await store.record(user.id).add(db, user.toJson());
+    return user;
+  }
+
   // // This should just return a lazy object rather than filling it.
   // Future<Timeline> timelineForUser(String userId) async {
   //   var store = stringMapStoreFactory.store('flaps');
@@ -53,8 +87,6 @@ class DataStore {
   //       userId, flaps.map((record) => Flap.fromJson(record.value)).toList());
   // }
 }
-
-var dataStore = DataStore();
 
 extension LastN<T> on List<T> {
   List<T> lastN(int n) {
