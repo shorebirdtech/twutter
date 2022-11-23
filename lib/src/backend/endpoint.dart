@@ -35,15 +35,15 @@ class FlapEndpoint extends Endpoint {
 // Like a flap.
 // Save the like info on the flap.
 // Notify the author of the flap.
-  Future<void> like(AuthenticatedContext context, String flapId) async {
-    // Save the like info on the flap.
-    var session = Session.of(context);
-    await DataStore.of(context).updateFlap(flapId, (flap) {
-      flap.likeUserIds.add(session.userId);
-    });
-    // Notify the author of the flap.
-    SendNotificationsEndpoint().sendLikeNotifications(flapId);
-  }
+  // Future<void> like(AuthenticatedContext context, String flapId) async {
+  //   // Save the like info on the flap.
+  //   var session = Session.of(context);
+  //   await DataStore.of(context).updateFlap(flapId, (flap) {
+  //     flap.likeUserIds.add(session.userId);
+  //   });
+  //   // Notify the author of the flap.
+  //   SendNotificationsEndpoint().sendLikeNotifications(flapId);
+  // }
 }
 
 // For an inactive user becoming active, we rebuild their timeline based

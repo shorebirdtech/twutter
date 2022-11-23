@@ -59,3 +59,7 @@ package:shelf/src/middleware/logger.dart 30:62  logRequests.<fn>.<fn>.<fn>
 * No support for renaming fields in database.
 * Want to see the output from client and server in one log?
 * Sembast methods will happily accept 'db' (instead of 'txn') inside a transcation callback and then just hang.  Need some sort of lint to catch that.
+* Had to set up my own custom docker images (there is only one flutter image, from cirrusci).
+* Had to use the "flutter" image for the backend, because dart pub get can't fetch a pubspec.yaml that mentions flutter.
+* Building docker files takes *minutes*
+* Not clear how you have multi-repo packages with dependencies.  When you pull them from git, relative path dependencies don't work.
