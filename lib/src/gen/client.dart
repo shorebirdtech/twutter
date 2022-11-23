@@ -56,12 +56,10 @@ extension FlapClient on Connection {
   }
 }
 
-class TimelineClient extends Client {
-  const TimelineClient(super.connection);
-
+extension TimelineClient on Connection {
   Future<List<Flap>> latestFlapsSince(
       {required String sinceFlapId, int maxCount = 50}) async {
-    var response = await connection.post('timeline/latestFlapsSince', {
+    var response = await post('timeline/latestFlapsSince', {
       'sinceFlapId': sinceFlapId,
       'maxCount': maxCount,
     });
@@ -73,9 +71,7 @@ class TimelineClient extends Client {
   }
 }
 
-class AuthClient extends Client {
-  const AuthClient(super.connection);
-
+extension AuthClient on Connection {
   // Future<User> whoAmI() async {
   //   var response = await sessionPost('users/whoami', {});
   //   if (response.statusCode != HttpStatus.ok) {
@@ -86,7 +82,7 @@ class AuthClient extends Client {
 
   Future<LoginResult> login(Credentials credentials) async {
     // Unclear if this should use post() or not since it sets up the session.
-    var response = await connection.post('login', credentials.toJson());
+    var response = await post('login', credentials.toJson());
     if (response.statusCode != HttpStatus.ok) {
       return LoginResult.failure(response.reasonPhrase!);
     }
@@ -94,16 +90,4 @@ class AuthClient extends Client {
     var result = AuthResponse.fromJson(resultJson);
     return LoginResult.success(result);
   }
-}
-
-class ClientRoot {
-  final Connection connection;
-  final FlapClient flap;
-  final AuthClient auth;
-  final TimelineClient timeline;
-
-  ClientRoot(this.connection)
-      : flap = FlapClient(connection),
-        auth = AuthClient(connection),
-        timeline = TimelineClient(connection);
 }

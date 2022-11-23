@@ -2,7 +2,6 @@ import 'package:flutter/widgets.dart';
 import 'package:twutter/src/model/user.dart';
 
 import 'gen/client.dart';
-import 'model/model.dart';
 
 // Aiming for simple state management.
 // Modeled on https://gist.github.com/HansMuller/29b03fc5e2285957ad7b0d6a58faac35

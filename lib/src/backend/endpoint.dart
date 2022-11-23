@@ -45,7 +45,7 @@ class FlapEndpoint extends Endpoint {
 // Notify the author of the flap.
   Future<void> like(AuthenticatedContext context, String flapId) async {
     // Save the like info on the flap.
-    var session = SessionController.of(context);
+    var session = Session.of(context);
     await dataStore.updateFlap(flapId, (flap) {
       flap.likeUserIds.add(session.userId);
     });
