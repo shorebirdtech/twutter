@@ -1,4 +1,6 @@
 // This dependency should not exist.
+import 'dart:io';
+
 import 'package:shorebird/shorebird.dart';
 import 'package:twutter/src/backend/endpoint.dart';
 import 'package:twutter/src/backend/model.dart';
@@ -14,7 +16,7 @@ void main() async {
     UserHandler(UserEndpoint()),
   ];
   var server = Server();
-  await server.serve(handlers, 'localhost', 3000);
+  await server.serve(handlers, InternetAddress.anyIPv4, 3000);
   // ignore: avoid_print
   print('Serving at http://${server.address.host}:${server.port}');
 }
