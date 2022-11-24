@@ -63,3 +63,4 @@ package:shelf/src/middleware/logger.dart 30:62  logRequests.<fn>.<fn>.<fn>
 * Had to use the "flutter" image for the backend, because dart pub get can't fetch a pubspec.yaml that mentions flutter.
 * Building docker files takes *minutes*
 * Not clear how you have multi-repo packages with dependencies.  When you pull them from git, relative path dependencies don't work.
+* CORS headers are a pain. Can you force localhost to have them?

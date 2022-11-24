@@ -14,7 +14,7 @@ void main() async {
     UserHandler(UserEndpoint()),
   ];
   var server = Server();
-  await server.serve(handlers, 'localhost', 8080);
+  await server.serve(handlers, 'localhost', 3000);
   // ignore: avoid_print
   print('Serving at http://${server.address.host}:${server.port}');
 }
