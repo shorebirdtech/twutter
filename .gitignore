@@ -2,6 +2,7 @@
 
 # Twutter specific
 sample.db
+env.json
 
 # Files and directories created by pub
 .dart_tool/

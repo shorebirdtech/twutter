@@ -7,6 +7,7 @@ Using Twitter as an example to demonstrate what a front-to-back app
 built on Shorebird could look like.
 
 ## Burndown List
+- Split out data layer to persist across pushes.
 - Publish to web via github hook?
 - Figure out images.
 - Add separate type for DatabaseId for Flaps, Users, etc.
@@ -64,3 +65,5 @@ package:shelf/src/middleware/logger.dart 30:62  logRequests.<fn>.<fn>.<fn>
 * Building docker files takes *minutes*
 * Not clear how you have multi-repo packages with dependencies.  When you pull them from git, relative path dependencies don't work.
 * CORS headers are a pain. Can you force localhost to have them?
+* Getting the docker image deployed with the correct ports was a pain.
+* Separate docker images for client and server make for long builds.
