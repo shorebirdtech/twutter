@@ -1,0 +1,27 @@
+name: twutter
+region: sfo
+services:
+  - dockerfile_path: dockerfiles/frontend.dockerfile
+    github:
+      branch: staging
+      deploy_on_push: true
+      repo: shorebirdtech/twutter
+    http_port: 80
+    instance_count: 1
+    instance_size_slug: basic-xs
+    name: frontend
+    routes:
+      - path: /
+    source_dir: /
+  - dockerfile_path: dockerfiles/backend.dockerfile
+    github:
+      branch: staging
+      deploy_on_push: true
+      repo: shorebirdtech/twutter
+    http_port: 3000
+    instance_count: 1
+    instance_size_slug: basic-xs
+    name: backend
+    routes:
+      - path: /api
+    source_dir: /
