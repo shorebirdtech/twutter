@@ -167,7 +167,7 @@ class _HomeState extends State<Home> {
               LayoutConfig.timelineHorizontalPadding, 0, 20, 0),
           child: ValueListenableBuilder<User?>(
             builder: (BuildContext context, User? user, Widget? child) =>
-                AvatarView(user: user ?? const User.empty()),
+                AvatarView(user: user ?? User.empty()),
             valueListenable: client.user,
           ),
         ), // Decide what logged out behavior is?

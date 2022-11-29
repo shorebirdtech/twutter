@@ -1,3 +1,4 @@
+import 'package:shorebird/datastore.dart';
 import 'package:twutter/src/backend/model.dart';
 import 'package:twutter/src/model/flap.dart';
 import 'package:twutter/src/model/user.dart';
@@ -12,8 +13,8 @@ class StoreAdaptor {
 
   Flap? lastFlapCreated;
 
-  Future<User> userById(String userId) => _store.userById(userId);
-  Future<Flap> flapById(String flapId) => _store.flapById(flapId);
+  Future<User> userById(ObjectId userId) => _store.userById(userId);
+  Future<Flap> flapById(ObjectId flapId) => _store.flapById(flapId);
 
   Future<Flap> createFlap(Flap flap) async {
     lastFlapCreated = await _store.createFlap(flap);
@@ -30,7 +31,7 @@ class DummyStoreBuilder {
   final StoreAdaptor store;
   DummyStoreBuilder(this.store);
 
-  Future<Flap> flapWithId(String id) async => store.flapById(id);
+  Future<Flap> flapWithId(ObjectId id) async => store.flapById(id);
 
   Future<User> createUser(String displayName, String username,
       {bool isVerified = false, bool isOfficial = false}) async {
@@ -75,7 +76,7 @@ class DummyStoreBuilder {
 
   // Retweets drop promotion status?
   // What happens to a retweet of a retweet?
-  void reflap(User author, Flap original, DateTime createdAt) {
+  Future<void> reflap(User author, Flap original, DateTime createdAt) async {
     if (createdAt.isBefore(original.createdAt)) {
       throw ArgumentError('Reflaps must be newer than the original flap.');
     }
@@ -84,10 +85,10 @@ class DummyStoreBuilder {
       originalFlapId: original.id,
       content: original.content,
     );
-    addFlap(flap, createdAt);
+    await addFlap(flap, createdAt);
   }
 
-  Future<void> build() async {
+  Future<void> execute() async {
     // Things to test:
     // Retweet or not (can wrap)
     // Author line
@@ -115,7 +116,7 @@ class DummyStoreBuilder {
         flutter,
         "Dash is headed to Kenya!  Join us for #FlutterForward, Jan 25, 2023",
         _ago(hours: 9));
-    reflap(eric, previousFlap(), _ago(hours: 4));
+    await reflap(eric, previousFlap(), _ago(hours: 4));
   }
 }
 
@@ -124,5 +125,6 @@ void main() async {
   await db.init();
   var store = StoreAdaptor(db);
   var builder = DummyStoreBuilder(store);
-  await builder.build();
+  await builder.execute();
+  await db.close();
 }

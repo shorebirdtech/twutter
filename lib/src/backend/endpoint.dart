@@ -1,5 +1,6 @@
 import 'dart:math';
 
+import 'package:shorebird/datastore.dart';
 import 'package:shorebird/shorebird.dart';
 import 'package:twutter/src/model/user.dart';
 
@@ -7,7 +8,7 @@ import "../model/flap.dart";
 import 'model.dart';
 
 class SendNotificationsEndpoint extends Endpoint {
-  void sendPublishNotifications(String flapId) {
+  void sendPublishNotifications(ObjectId flapId) {
     // Send notifications to all followers.
     // Send notifications to all users mentioned in the flap.
     // Send notifications to all hashtags mentioned in the flap.
@@ -70,14 +71,14 @@ class TimelineEndpoint extends Endpoint {
   // }
 
   Future<bool> haveFlapsSince(
-      AuthenticatedContext context, String flapId) async {
+      AuthenticatedContext context, ObjectId flapId) async {
     var flaps =
         await latestFlapsSince(context, sinceFlapId: flapId, maxCount: 1);
     return flaps.isNotEmpty;
   }
 
   Future<List<Flap>> latestFlapsSince(AuthenticatedContext context,
-      {required String sinceFlapId, required int maxCount}) async {
+      {required ObjectId sinceFlapId, required int maxCount}) async {
     // var session = SessionController.of(context);
     // Load the last 100 flaps.
     // Look for the flap id, if it's not present, assume we have newer
@@ -106,7 +107,7 @@ class TimelineEndpoint extends Endpoint {
 }
 
 class UserEndpoint extends Endpoint {
-  Future<User> userById(AuthenticatedContext context, String userId) async {
+  Future<User> userById(AuthenticatedContext context, ObjectId userId) async {
     return await DataStore.of(context).userById(userId);
   }
 

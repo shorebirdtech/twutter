@@ -40,12 +40,12 @@ dependencies:
     git:
       url: https://github.com/shorebirdtech/shorebird.git
       path: packages/shorebird_flutter
-  sembast: ^3.3.1
   json_annotation: ^4.7.0
   shelf: ^1.4.0
   shelf_router: ^1.1.3
   http: ^0.13.5
   meta: ^1.8.0
+  mongo_dart: ^0.8.1
 
 dev_dependencies:
   flutter_lints: ^2.0.0
@@ -57,7 +57,7 @@ dependency_overrides:
   eventsource:
     git: https://github.com/eseidel/dart-eventsource.git
   shorebird:
-    # path: ../shorebird/packages/shorebird_flutter
+    # path: ../shorebird/packages/shorebird
     git:
       url: https://github.com/shorebirdtech/shorebird.git
       path: packages/shorebird

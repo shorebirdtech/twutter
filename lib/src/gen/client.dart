@@ -3,6 +3,7 @@ import 'dart:io';
 
 import 'package:flutter/cupertino.dart';
 import 'package:http/http.dart' as http;
+import 'package:mongo_dart/mongo_dart.dart' as mongo;
 import 'package:twutter/src/model/flap.dart';
 import 'package:twutter/src/model/user.dart';
 
@@ -84,7 +85,7 @@ class Client {
     return (json as List).map((e) => Flap.fromJson(e)).toList();
   }
 
-  Future<User> userById(String userId) async {
+  Future<User> userById(mongo.ObjectId userId) async {
     var response = await post('user/userById', {'userId': userId});
     if (response.statusCode != HttpStatus.ok) {
       throw Exception('Failed to get user');

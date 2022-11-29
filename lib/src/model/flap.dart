@@ -1,5 +1,6 @@
 import 'package:json_annotation/json_annotation.dart';
 import 'package:meta/meta.dart';
+import 'package:shorebird/datastore.dart';
 
 part 'flap.g.dart';
 
@@ -16,10 +17,11 @@ part 'flap.g.dart';
 // Can this just be combined into Flap?
 // e.g. annotate which things with Flap?
 @JsonSerializable()
+@ObjectIdConverter()
 class DraftFlap {
-  final String authorId;
-  final String? previousFlapId; // for threads
-  final String? originalFlapId; // for retweets
+  final ObjectId authorId;
+  final ObjectId? previousFlapId; // for threads
+  final ObjectId? originalFlapId; // for retweets
   final bool isPromoted;
   final String content;
 
@@ -62,12 +64,14 @@ class DraftFlap {
 }
 
 @JsonSerializable()
+@ObjectIdConverter()
 @immutable
 class Flap {
-  final String id; // Only on confirmed flaps?
-  final String authorId;
-  final String? previousFlapId; // for threads
-  final String? originalFlapId; // for retweets
+  final ObjectId id; // Only on confirmed flaps?
+
+  final ObjectId authorId;
+  final ObjectId? previousFlapId; // for threads
+  final ObjectId? originalFlapId; // for retweets
   final bool isPromoted;
   final String content;
   final DateTime createdAt;
@@ -100,23 +104,17 @@ class Flap {
       this.isPromoted = false});
 
   Flap.fromDraft(DraftFlap draft, this.createdAt)
-      : id = '', // Will be set by the database.
+      : id = ObjectId(), // Will be set by the database.
         authorId = draft.authorId,
         content = draft.content,
         previousFlapId = draft.previousFlapId,
         originalFlapId = draft.originalFlapId,
         isPromoted = draft.isPromoted;
 
-  Flap copyWith({String? id}) {
-    return Flap(
-        id: id ?? this.id,
-        authorId: authorId,
-        content: content,
-        createdAt: createdAt,
-        previousFlapId: previousFlapId,
-        originalFlapId: originalFlapId,
-        isPromoted: isPromoted);
-  }
+  factory Flap.fromDbJson(Map<String, dynamic> json) =>
+      Flap.fromJson(DbJsonConverter.fromDbJson(json));
+
+  Map<String, dynamic> toDbJson() => DbJsonConverter.toDbJson(toJson());
 
   factory Flap.fromJson(Map<String, dynamic> json) => _$FlapFromJson(json);
 

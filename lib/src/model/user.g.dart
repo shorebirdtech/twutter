@@ -27,7 +27,7 @@ Map<String, dynamic> _$AuthResponseToJson(AuthResponse instance) =>
     };
 
 User _$UserFromJson(Map<String, dynamic> json) => User(
-      id: json['id'] as String,
+      id: const ObjectIdConverter().fromJson(json['id'] as String),
       displayName: json['displayName'] as String,
       username: json['username'] as String,
       official: json['official'] as bool? ?? false,
@@ -35,7 +35,7 @@ User _$UserFromJson(Map<String, dynamic> json) => User(
     );
 
 Map<String, dynamic> _$UserToJson(User instance) => <String, dynamic>{
-      'id': instance.id,
+      'id': const ObjectIdConverter().toJson(instance.id),
       'displayName': instance.displayName,
       'username': instance.username,
       'official': instance.official,

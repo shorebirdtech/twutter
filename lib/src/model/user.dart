@@ -1,4 +1,5 @@
 import 'package:json_annotation/json_annotation.dart';
+import 'package:shorebird/datastore.dart';
 
 part 'user.g.dart';
 
@@ -32,9 +33,10 @@ class SignUp {
 }
 
 @JsonSerializable()
+@ObjectIdConverter()
 // Split user (auth) vs. profile (public) data?
 class User {
-  final String id;
+  final ObjectId id;
   // Mutable with a long time scale component.
   final String displayName;
   final String username;
@@ -57,23 +59,18 @@ class User {
   });
 
   User.fromSignUp(SignUp signUp)
-      : id = '',
+      : id = ObjectId(),
         displayName = signUp.displayName,
         username = signUp.username,
         official = false,
         verified = false;
 
-  User copyWith({String? id}) {
-    return User(
-      id: id ?? this.id,
-      displayName: displayName,
-      username: username,
-      official: official,
-      verified: verified,
-    );
-  }
+  User.empty() : this(id: ObjectId(), displayName: '', username: '');
 
-  const User.empty() : this(id: '', displayName: '', username: '');
+  factory User.fromDbJson(Map<String, dynamic> json) =>
+      User.fromJson(DbJsonConverter.fromDbJson(json));
+
+  Map<String, dynamic> toDbJson() => DbJsonConverter.toDbJson(toJson());
 
   factory User.fromJson(Map<String, dynamic> json) => _$UserFromJson(json);
   Map<String, dynamic> toJson() => _$UserToJson(this);

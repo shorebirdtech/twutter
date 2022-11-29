@@ -1,11 +1,13 @@
-import 'package:sembast/sembast.dart';
-import 'package:sembast/sembast_io.dart';
+import 'dart:convert';
+import 'dart:io';
+
+import 'package:shorebird/datastore.dart';
 import 'package:shorebird/shorebird.dart';
 import 'package:twutter/src/model/flap.dart';
 import 'package:twutter/src/model/user.dart';
 
 class DataStore {
-  late Database db;
+  late Db db;
 
   DataStore();
 
@@ -15,83 +17,84 @@ class DataStore {
   factory DataStore.of(AuthenticatedContext context) => _singleton;
 
   Future<void> init() async {
-    String dbPath = 'sample.db';
-    DatabaseFactory dbFactory = databaseFactoryIo;
-    db = await dbFactory.openDatabase(dbPath);
+    var env = File('env.json');
+    var envJson = jsonDecode(await env.readAsString());
+    var mongoUri = envJson['MONGO_URI'];
+    db = await Db.create(mongoUri);
+    await db.open();
   }
 
-  Future<Flap> flapById(String id) async {
-    var store = stringMapStoreFactory.store('flaps');
-    var flapRecord = await store.record(id).get(db);
-    if (flapRecord == null) {
+  Future<void> close() async {
+    await db.close();
+  }
+
+  Future<Flap> flapById(ObjectId id) async {
+    var store = db.collection('flaps');
+    var flapJson = await store.findOne(where.id(id));
+    if (flapJson == null) {
       throw Exception('Flap not found: $id');
     }
-    return Flap.fromJson(flapRecord);
+    return Flap.fromDbJson(flapJson);
   }
 
   Future<Flap> createFlap(Flap flap) async {
-    return await db.transaction((txn) async {
-      var store = stringMapStoreFactory.store('flaps');
-      var id = await store.add(txn, flap.toJson());
-      var flapWithId = flap.copyWith(id: id);
-      await store.record(id).update(txn, flapWithId.toJson());
-      return flapWithId;
-    });
+    // Should either use a transaction or an ObjectId for this two step process.
+    var store = db.collection('flaps');
+    var dbJson = flap.toDbJson();
+    // insert modifies the dbJson to include _id.
+    await store.insert(dbJson);
+    return Flap.fromDbJson(dbJson);
   }
 
-  Future<void> updateFlap(String flapId, Function(Flap flap) update) async {
-    await db.transaction((txn) async {
-      var store = stringMapStoreFactory.store('flaps');
-      var flapJson = await store.record(flapId).get(txn);
-      if (flapJson == null) {
-        throw "Flap not found";
-      }
-      var flap = Flap.fromJson(flapJson);
-      update(flap);
-      await store.record(flapId).put(txn, flap.toJson());
-    });
+  Future<void> updateFlap(ObjectId flapId, Function(Flap flap) callback) async {
+    var store = db.collection('flaps');
+    var flapJson = await store.findOne(where.eq('_id', flapId));
+    if (flapJson == null) {
+      throw Exception('Flap not found: $flapId');
+    }
+    var flap = Flap.fromDbJson(flapJson);
+    callback(flap);
+    flapJson = flap.toDbJson();
+    await store.updateOne(where.id(flapId), flapJson);
   }
 
-  Future<void> deleteFlap(String flapId) async {
-    var store = stringMapStoreFactory.store('flaps');
-    await store.record(flapId).delete(db);
+  Future<void> deleteFlap(ObjectId flapId) async {
+    var store = db.collection('flaps');
+    await store.deleteOne(where.id(flapId));
   }
 
   Future<List<Flap>> mostRecentFlaps(int maxFlaps) async {
-    var store = stringMapStoreFactory.store('flaps');
-    // Get all Flaps for now.
-    var finder = Finder(sortOrders: [SortOrder('createdAt')], limit: maxFlaps);
-    var flaps = await store.find(db, finder: finder);
-    return flaps.map((record) => Flap.fromJson(record.value)).toList();
+    var store = db.collection('flaps');
+    var flapJsons = await store
+        .find(where.sortBy('createdAt', descending: true).limit(maxFlaps))
+        .toList();
+    return flapJsons.map((flapJson) => Flap.fromJson(flapJson)).toList();
   }
 
-  Future<User> userById(String userId) async {
-    var store = stringMapStoreFactory.store('users');
-    var userJson = await store.record(userId).get(db);
+  Future<User> userById(ObjectId userId) async {
+    var store = db.collection('users');
+    var userJson = await store.findOne(where.eq('_id', userId));
     if (userJson == null) {
-      throw "User not found";
+      throw Exception('User not found: $userId');
     }
-    return User.fromJson(userJson);
+    return User.fromDbJson(userJson);
   }
 
   Future<User> userByUsername(String username) async {
-    var store = stringMapStoreFactory.store('users');
-    var finder = Finder(filter: Filter.equals('username', username), limit: 1);
-    var users = await store.find(db, finder: finder);
-    if (users.isEmpty) {
-      throw "User not found";
+    var store = db.collection('users');
+    var userJson = await store.findOne(where.eq('username', username));
+    if (userJson == null) {
+      throw Exception('User not found: $username');
     }
-    return User.fromJson(users.first.value);
+    return User.fromDbJson(userJson);
   }
 
   Future<User> createUser(User user) async {
-    return await db.transaction((txn) async {
-      var store = stringMapStoreFactory.store('users');
-      var id = await store.add(txn, user.toJson());
-      var withId = user.copyWith(id: id);
-      await store.record(id).update(txn, withId.toJson());
-      return withId;
-    });
+    var store = db.collection('users');
+    var dbJson = user.toDbJson();
+    // insert modifies the dbJson to include _id.
+    await store.insert(dbJson);
+    return User.fromDbJson(dbJson);
   }
 
   // // This should just return a lazy object rather than filling it.

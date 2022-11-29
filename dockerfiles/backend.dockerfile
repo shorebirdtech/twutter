@@ -34,6 +34,7 @@ RUN dart compile exe bin/server.dart -o /app/serve
 # and the pre-built AOT-runtime in the `/runtime/` directory of the base image.
 FROM scratch
 COPY --from=dart:stable /runtime/ /
+COPY --from=build /app/env.json /
 COPY --from=build /app/serve /app/backend/
 
 EXPOSE 3000
