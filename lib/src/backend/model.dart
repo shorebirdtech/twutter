@@ -1,10 +1,11 @@
 import 'dart:io';
 
-import 'package:shorebird/datastore.dart';
+import 'package:mongo_dart/mongo_dart.dart';
 import 'package:shorebird/shorebird.dart';
 import 'package:twutter/src/model/flap.dart';
 import 'package:twutter/src/model/user.dart';
 
+// FIXME: DataStore should move to package:shorebird.
 class DataStore {
   late Db db;
 
@@ -67,7 +68,7 @@ class DataStore {
     var flapJsons = await store
         .find(where.sortBy('createdAt', descending: true).limit(maxFlaps))
         .toList();
-    return flapJsons.map((flapJson) => Flap.fromJson(flapJson)).toList();
+    return flapJsons.map((flapJson) => Flap.fromDbJson(flapJson)).toList();
   }
 
   Future<User> userById(ObjectId userId) async {

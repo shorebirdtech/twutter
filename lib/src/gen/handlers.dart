@@ -1,12 +1,16 @@
 import 'dart:convert';
 
+import 'package:json_annotation/json_annotation.dart';
 import 'package:shelf/shelf.dart';
 import 'package:shelf_router/shelf_router.dart';
+import 'package:shorebird/datastore.dart';
 import 'package:shorebird/shorebird.dart';
 import 'package:twutter/src/backend/endpoint.dart';
 
 import '../model/flap.dart';
 import '../model/user.dart';
+
+part 'handlers.g.dart';
 
 class FlapHandler extends ShorebirdHandler {
   final FlapEndpoint endpoint;
@@ -25,6 +29,19 @@ class FlapHandler extends ShorebirdHandler {
   }
 }
 
+@JsonSerializable()
+@ObjectIdConverter()
+class LatestFlapsSinceArgs {
+  final ObjectId? sinceFlapId;
+  final int maxCount;
+
+  LatestFlapsSinceArgs({this.sinceFlapId, this.maxCount = 50});
+
+  factory LatestFlapsSinceArgs.fromJson(Map<String, dynamic> json) =>
+      _$LatestFlapsSinceArgsFromJson(json);
+  Map<String, dynamic> toJson() => _$LatestFlapsSinceArgsToJson(this);
+}
+
 class TimelineHandler extends ShorebirdHandler {
   final TimelineEndpoint endpoint;
 
@@ -35,8 +52,9 @@ class TimelineHandler extends ShorebirdHandler {
     router.post('/timeline/latestFlapsSince', (Request request) async {
       // verify session
       var argsJson = jsonDecode(await request.readAsString());
+      var args = LatestFlapsSinceArgs.fromJson(argsJson);
       var flaps = await endpoint.latestFlapsSince(AuthenticatedContext(),
-          sinceFlapId: argsJson['sinceFlapId'], maxCount: argsJson['maxCount']);
+          sinceFlapId: args.sinceFlapId, maxCount: args.maxCount);
       return Response.ok(jsonEncode(flaps));
     });
   }
@@ -54,7 +72,7 @@ class UserHandler extends ShorebirdHandler {
       var argsJson = jsonDecode(await request.readAsString());
       var user = await endpoint.userById(
         AuthenticatedContext(),
-        argsJson['userId'],
+        const ObjectIdConverter().fromJson(argsJson['userId']),
       );
       return Response.ok(jsonEncode(user));
     });

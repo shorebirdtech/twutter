@@ -18,7 +18,7 @@ class SendNotificationsEndpoint extends Endpoint {
     // We periodically cull timelines for users beyond a certain size.
   }
 
-  void sendLikeNotifications(String flapId) {}
+  void sendLikeNotifications(ObjectId flapId) {}
 }
 
 class FlapEndpoint extends Endpoint {
@@ -78,7 +78,7 @@ class TimelineEndpoint extends Endpoint {
   }
 
   Future<List<Flap>> latestFlapsSince(AuthenticatedContext context,
-      {required ObjectId sinceFlapId, required int maxCount}) async {
+      {required ObjectId? sinceFlapId, required int maxCount}) async {
     // var session = SessionController.of(context);
     // Load the last 100 flaps.
     // Look for the flap id, if it's not present, assume we have newer

@@ -3,7 +3,8 @@ import 'dart:io';
 
 import 'package:flutter/cupertino.dart';
 import 'package:http/http.dart' as http;
-import 'package:mongo_dart/mongo_dart.dart' as mongo;
+import 'package:shorebird/datastore.dart';
+import 'package:twutter/src/gen/handlers.dart';
 import 'package:twutter/src/model/flap.dart';
 import 'package:twutter/src/model/user.dart';
 
@@ -41,6 +42,9 @@ class Client {
   }
 
   // Should use our own Response type.
+  // This should take an Args type, which implements toJson, thus requiring
+  // all calls to go through strongly typed json conversion.
+  // Otherwise it's easy to send a one type and have the other side expect another type.
   Future<http.Response> post(String path, Map<String, dynamic> body) async {
     var url = Uri.parse('$baseUrl/$path');
     var headers = {
@@ -73,11 +77,10 @@ class Client {
   }
 
   Future<List<Flap>> latestFlapsSince(
-      {required String sinceFlapId, int maxCount = 50}) async {
-    var response = await post('timeline/latestFlapsSince', {
-      'sinceFlapId': sinceFlapId,
-      'maxCount': maxCount,
-    });
+      {ObjectId? sinceFlapId, int maxCount = 50}) async {
+    var args =
+        LatestFlapsSinceArgs(sinceFlapId: sinceFlapId, maxCount: maxCount);
+    var response = await post('timeline/latestFlapsSince', args.toJson());
     if (response.statusCode != HttpStatus.ok) {
       throw Exception('Failed to get latest flaps');
     }
@@ -85,7 +88,7 @@ class Client {
     return (json as List).map((e) => Flap.fromJson(e)).toList();
   }
 
-  Future<User> userById(mongo.ObjectId userId) async {
+  Future<User> userById(ObjectId userId) async {
     var response = await post('user/userById', {'userId': userId});
     if (response.statusCode != HttpStatus.ok) {
       throw Exception('Failed to get user');
@@ -178,7 +181,7 @@ class Actions {
   }
 
   Future<void> refreshTimeline() async {
-    var latestFlaps = await client.latestFlapsSince(sinceFlapId: '');
+    var latestFlaps = await client.latestFlapsSince();
     var flaps = <CachedFlap>[];
     for (var flap in latestFlaps) {
       var author = await client.userById(flap.authorId);
