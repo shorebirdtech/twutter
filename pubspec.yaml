@@ -39,7 +39,6 @@ dependencies:
   shelf_router: ^1.1.3
   http: ^0.13.5
   meta: ^1.8.0
-  mongo_dart: ^0.8.1
 
 dev_dependencies:
   flutter_lints: ^2.0.0

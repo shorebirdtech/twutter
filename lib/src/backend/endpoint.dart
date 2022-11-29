@@ -5,7 +5,6 @@ import 'package:shorebird/shorebird.dart';
 import 'package:twutter/src/model/user.dart';
 
 import "../model/flap.dart";
-import 'model.dart';
 
 class SendNotificationsEndpoint extends Endpoint {
   void sendPublishNotifications(ObjectId flapId) {
@@ -27,28 +26,24 @@ class FlapEndpoint extends Endpoint {
     // Create the flap from the draft.
     var flap = Flap.fromDraft(draft, DateTime.now());
     // Save the flap.
-    await DataStore.of(context).createFlap(flap);
+    await DataStore.of(context).collection<Flap>().create(flap);
     // Delete the draft once confirmed?
     // Alert followers of the flap.
     SendNotificationsEndpoint().sendPublishNotifications(flap.id);
   }
-
-// Like a flap.
-// Save the like info on the flap.
-// Notify the author of the flap.
-  // Future<void> like(AuthenticatedContext context, String flapId) async {
-  //   // Save the like info on the flap.
-  //   var session = Session.of(context);
-  //   await DataStore.of(context).updateFlap(flapId, (flap) {
-  //     flap.likeUserIds.add(session.userId);
-  //   });
-  //   // Notify the author of the flap.
-  //   SendNotificationsEndpoint().sendLikeNotifications(flapId);
-  // }
 }
 
 // For an inactive user becoming active, we rebuild their timeline based
 // on their followers.
+
+extension LastN<T> on List<T> {
+  List<T> lastN(int n) {
+    if (n >= length) {
+      return this;
+    }
+    return sublist(length - n);
+  }
+}
 
 // This should read from a per-user timeline cache.
 // That cache should be generated/updated when a user edits their follows.
@@ -84,8 +79,10 @@ class TimelineEndpoint extends Endpoint {
     // Look for the flap id, if it's not present, assume we have newer
     // and return the most recent maxCount.
 
-    const int maxFlaps = 100;
-    var flaps = await DataStore.of(context).mostRecentFlaps(maxFlaps);
+    var flaps = await DataStore.of(context)
+        .collection<Flap>()
+        .find(where.sortBy('createdAt', descending: true).limit(maxCount))
+        .toList();
     var lastSeenIndex =
         flaps.indexWhere((element) => element.id == sinceFlapId);
     if (lastSeenIndex == -1) {
@@ -108,12 +105,18 @@ class TimelineEndpoint extends Endpoint {
 
 class UserEndpoint extends Endpoint {
   Future<User> userById(AuthenticatedContext context, ObjectId userId) async {
-    return await DataStore.of(context).userById(userId);
+    var user = await DataStore.of(context).collection<User>().byId(userId);
+    if (user == null) {
+      throw Exception("User not found");
+    }
+    return user;
   }
 
   Future<User> userByUsername(
       AuthenticatedContext context, String username) async {
-    var user = await DataStore.of(context).userByUsername(username);
+    var user = await DataStore.of(context)
+        .collection<User>()
+        .findOne(where.eq('username', username));
     if (user == null) {
       throw Exception("User not found");
     }
@@ -128,7 +131,9 @@ class AuthEndpoint extends Endpoint {
     // Validate the user.
     // Create a session.
     // Set the session cookie.
-    var user = await DataStore.of(context).userByUsername(request.username);
+    var user = await DataStore.of(context)
+        .collection<User>()
+        .findOne(where.eq('username', request.username));
     if (user == null) {
       throw Exception("User not found");
     }

@@ -1,6 +1,6 @@
 import 'package:shorebird/datastore.dart';
-import 'package:twutter/src/backend/model.dart';
 import 'package:twutter/src/model/flap.dart';
+import 'package:twutter/src/model/model.dart';
 import 'package:twutter/src/model/user.dart';
 
 DateTime _ago({int days = 0, int hours = 0, int minutes = 0}) => DateTime.now()
@@ -13,16 +13,18 @@ class StoreAdaptor {
 
   Flap? lastFlapCreated;
 
-  Future<User> userById(ObjectId userId) => _store.userById(userId);
-  Future<Flap> flapById(ObjectId flapId) => _store.flapById(flapId);
+  Future<User?> userById(ObjectId userId) =>
+      _store.collection<User>().byId(userId);
+  Future<Flap?> flapById(ObjectId flapId) =>
+      _store.collection<Flap>().byId(flapId);
 
   Future<Flap> createFlap(Flap flap) async {
-    lastFlapCreated = await _store.createFlap(flap);
+    lastFlapCreated = await _store.collection<Flap>().create(flap);
     return lastFlapCreated!;
   }
 
   Future<User> createUser(SignUp signUp) =>
-      _store.createUser(User.fromSignUp(signUp));
+      _store.collection<User>().create(User.fromSignUp(signUp));
 
   Flap previousFlap() => lastFlapCreated!;
 }
@@ -31,7 +33,7 @@ class DummyStoreBuilder {
   final StoreAdaptor store;
   DummyStoreBuilder(this.store);
 
-  Future<Flap> flapWithId(ObjectId id) async => store.flapById(id);
+  Future<Flap?> flapWithId(ObjectId id) async => store.flapById(id);
 
   Future<User> createUser(String displayName, String username,
       {bool isVerified = false, bool isOfficial = false}) async {
@@ -46,6 +48,9 @@ class DummyStoreBuilder {
   void validate(DraftFlap draft, DateTime createdAt) async {
     if (draft.originalFlapId != null) {
       var original = await flapWithId(draft.originalFlapId!);
+      if (original == null) {
+        throw ArgumentError('Replies must have a valid original flap.');
+      }
       if (createdAt.isBefore(original.createdAt)) {
         throw ArgumentError('Replies must be newer than the original flap.');
       }
@@ -126,7 +131,7 @@ class DummyStoreBuilder {
 
 void main() async {
   print("Adding dummy data (takes several seconds against the real db)...");
-  await DataStore.initSingleton();
+  await DataStore.initSingleton(DataStoreRemote(classInfoMap));
   var db = DataStore.instance;
   var store = StoreAdaptor(db);
   var builder = DummyStoreBuilder(store);

@@ -1,13 +1,13 @@
-// This dependency should not exist.
 import 'dart:io';
 
+import 'package:shorebird/datastore.dart';
 import 'package:shorebird/shorebird.dart';
 import 'package:twutter/src/backend/endpoint.dart';
-import 'package:twutter/src/backend/model.dart';
 import 'package:twutter/src/gen/handlers.dart';
+import 'package:twutter/src/model/model.dart';
 
 void main() async {
-  await DataStore.initSingleton();
+  await DataStore.initSingleton(DataStoreRemote(classInfoMap));
 
   var handlers = <ShorebirdHandler>[
     FlapHandler(FlapEndpoint()),
