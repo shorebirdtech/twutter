@@ -95,11 +95,22 @@ class AuthHandler extends ShorebirdHandler {
 
   @override
   void addRoutes(Router router) {
+    router.post('/signup', (Request request) async {
+      var json = jsonDecode(await request.readAsString());
+      var signUp = SignUp.fromJson(json);
+      var result = await endpoint.signUp(RequestContext(), signUp);
+      return Response.ok(jsonEncode(result.toJson()));
+    });
+
     router.post('/login', (Request request) async {
       var credentialsJson = jsonDecode(await request.readAsString());
-      var credentials = Credentials.fromJson(credentialsJson);
-      var result = await endpoint.login(RequestContext(), credentials);
-      return Response.ok(jsonEncode(result.toJson()));
+      var credentials = AuthRequest.fromJson(credentialsJson);
+      try {
+        var result = await endpoint.login(RequestContext(), credentials);
+        return Response.ok(jsonEncode(result.toJson()));
+      } catch (e) {
+        return Response(500, body: "Invalid credentials.");
+      }
     });
   }
 }

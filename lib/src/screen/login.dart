@@ -12,7 +12,10 @@ class LoginDialog extends StatefulWidget {
 }
 
 class _LoginDialogState extends State<LoginDialog> {
-  TextEditingController textController = TextEditingController();
+  final _formKey = GlobalKey<FormState>();
+
+  late String username;
+  late String password;
   String? failureMessage;
 
   void closeLoginWindow() {
@@ -23,7 +26,7 @@ class _LoginDialogState extends State<LoginDialog> {
 
   void login() async {
     var client = Client.of(context);
-    var credentials = Credentials(username: textController.text);
+    var credentials = AuthRequest(username: username, password: password);
     var result = await client.actions.login(credentials);
     if (result.success) {
       closeLoginWindow();
@@ -49,16 +52,62 @@ class _LoginDialogState extends State<LoginDialog> {
         ],
         centerTitle: true,
       ),
-      body: Column(children: [
-        const Text("Username:"),
-        TextField(
-          controller: textController,
-          decoration: const InputDecoration(
-              border: InputBorder.none, hintText: "Username"),
-          onSubmitted: (_) => login(),
-        ),
-        if (failureMessage != null) Text(failureMessage!),
-      ]),
+      body: Form(
+        key: _formKey,
+        child: Column(children: [
+          const Text("Username:"),
+          TextFormField(
+            decoration: const InputDecoration(hintText: "e.g. jack"),
+            validator: (String? value) {
+              if (value != null && value.trim().isEmpty) {
+                return 'Username is required';
+              }
+              return null;
+            },
+            onSaved: (String? value) {
+              setState(() {
+                username = value!;
+              });
+            },
+          ),
+          const Text("Password:"),
+          TextFormField(
+            obscureText: true,
+            enableSuggestions: false,
+            autocorrect: false,
+            validator: (String? value) {
+              if (value != null && value.trim().isEmpty) {
+                return 'Password is required';
+              }
+              return null;
+            },
+            onSaved: (String? value) {
+              setState(() {
+                password = value!;
+              });
+            },
+          ),
+          ElevatedButton(
+            onPressed: () {
+              // Validate returns true if the form is valid, or false
+              // otherwise.
+              var state = _formKey.currentState!;
+              if (state.validate()) {
+                state.save();
+                login();
+              }
+            },
+            child: const Text('Submit'),
+          ),
+          if (failureMessage != null) Text(failureMessage!),
+          const Divider(),
+          const Text("New to Twutter?"),
+          ElevatedButton(
+            onPressed: () => Navigator.of(context).pushNamed("/signup"),
+            child: const Text("Sign up"),
+          ),
+        ]),
+      ),
     );
   }
 }

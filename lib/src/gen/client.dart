@@ -97,9 +97,19 @@ class Client {
     return User.fromJson(json);
   }
 
-  Future<LoginResult> login(Credentials credentials) async {
+  Future<LoginResult> login(AuthRequest credentials) async {
     // Unclear if this should use post() or not since it sets up the session.
     var response = await post('login', credentials.toJson());
+    if (response.statusCode != HttpStatus.ok) {
+      return LoginResult.failure(response.reasonPhrase!);
+    }
+    var resultJson = jsonDecode(response.body);
+    var result = AuthResponse.fromJson(resultJson);
+    return LoginResult.success(result);
+  }
+
+  Future<LoginResult> signUp(SignUp signUp) async {
+    var response = await post('signup', signUp.toJson());
     if (response.statusCode != HttpStatus.ok) {
       return LoginResult.failure(response.reasonPhrase!);
     }
@@ -193,8 +203,16 @@ class Actions {
     client.cachedFlaps.value = flaps;
   }
 
-  Future<LoginResult> login(Credentials credentials) async {
+  Future<LoginResult> login(AuthRequest credentials) async {
     var result = await client.login(credentials);
+    if (result.success) {
+      client.authAsUser(result.auth!);
+    }
+    return result;
+  }
+
+  Future<LoginResult> signUp(SignUp signUp) async {
+    var result = await client.signUp(signUp);
     if (result.success) {
       client.authAsUser(result.auth!);
     }

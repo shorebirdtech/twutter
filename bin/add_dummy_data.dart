@@ -35,7 +35,11 @@ class DummyStoreBuilder {
 
   Future<User> createUser(String displayName, String username,
       {bool isVerified = false, bool isOfficial = false}) async {
-    var signUp = SignUp(displayName: displayName, username: username);
+    var signUp = SignUp(
+      displayName: displayName,
+      username: username,
+      password: '1234',
+    );
     return await store.createUser(signUp);
   }
 

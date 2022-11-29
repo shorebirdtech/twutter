@@ -3,14 +3,29 @@ import 'package:shorebird/datastore.dart';
 
 part 'user.g.dart';
 
+// Stored separately from User so passwords aren't passed around.
 @JsonSerializable()
-class Credentials {
+@ObjectIdConverter()
+class AuthEntry {
+  final ObjectId id;
   final String username;
-  Credentials({required this.username});
+  final String password;
+  AuthEntry({required this.id, required this.username, required this.password});
 
-  factory Credentials.fromJson(Map<String, dynamic> json) =>
-      _$CredentialsFromJson(json);
-  Map<String, dynamic> toJson() => _$CredentialsToJson(this);
+  factory AuthEntry.fromJson(Map<String, dynamic> json) =>
+      _$AuthEntryFromJson(json);
+  Map<String, dynamic> toJson() => _$AuthEntryToJson(this);
+}
+
+@JsonSerializable()
+class AuthRequest {
+  final String username;
+  final String password;
+  AuthRequest({required this.username, required this.password});
+
+  factory AuthRequest.fromJson(Map<String, dynamic> json) =>
+      _$AuthRequestFromJson(json);
+  Map<String, dynamic> toJson() => _$AuthRequestToJson(this);
 }
 
 @JsonSerializable()
@@ -25,11 +40,19 @@ class AuthResponse {
   Map<String, dynamic> toJson() => _$AuthResponseToJson(this);
 }
 
+@JsonSerializable()
 class SignUp {
   final String username;
   final String displayName;
+  final String password;
 
-  SignUp({required this.username, required this.displayName});
+  SignUp({
+    required this.username,
+    required this.displayName,
+    required this.password,
+  });
+  factory SignUp.fromJson(Map<String, dynamic> json) => _$SignUpFromJson(json);
+  Map<String, dynamic> toJson() => _$SignUpToJson(this);
 }
 
 @JsonSerializable()

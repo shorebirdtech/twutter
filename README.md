@@ -19,6 +19,11 @@ built on Shorebird could look like.
 - Add Reflaps
 - Add Search
 
+## Bugs
+- /home and other routes don't actually check for login.
+- Session is not persisted locally.
+- Sessions on the server are fake (and not persisted).
+
 # Arch
 Client holds open an EventSource connection to the server to receive
 notification of timeline, message or notifciation updates.
@@ -33,14 +38,6 @@ the cloud and it not matter.
 
 Views reach through to model which caches or requests from client as necessary.
 
-
-
-* View layer
-* Data layer
-* Connection management layer
-Is this just Model View Controller?
-
-* Want a data layer that can just store Dart objects.
 
 
 # Questions?

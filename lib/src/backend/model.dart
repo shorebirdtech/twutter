@@ -80,11 +80,11 @@ class DataStore {
     return User.fromDbJson(userJson);
   }
 
-  Future<User> userByUsername(String username) async {
+  Future<User?> userByUsername(String username) async {
     var store = db.collection('users');
     var userJson = await store.findOne(where.eq('username', username));
     if (userJson == null) {
-      throw Exception('User not found: $username');
+      return null;
     }
     return User.fromDbJson(userJson);
   }
@@ -95,6 +95,14 @@ class DataStore {
     // insert modifies the dbJson to include _id.
     await store.insert(dbJson);
     return User.fromDbJson(dbJson);
+  }
+
+  Future<bool> matchCredentials(
+      {required String username, required String password}) async {
+    var store = db.collection('credentials');
+    var dbJson = await store.findOne(
+        where.eq('username', username).and(where.eq('password', password)));
+    return dbJson != null;
   }
 
   // // This should just return a lazy object rather than filling it.

@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:twutter/src/model/flap.dart';
 
 import '../gen/client.dart';
-import 'button.dart';
-import 'config.dart';
+import '../view/button.dart';
+import '../view/config.dart';
 
 class ComposeDialog extends StatefulWidget {
   const ComposeDialog({super.key});
