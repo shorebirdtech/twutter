@@ -20,12 +20,6 @@ version: 1.0.0+1
 environment:
   sdk: ">=2.17.6 <3.0.0"
 
-# Dependencies specify other packages that your package needs in order to work.
-# To automatically upgrade your package dependencies to the latest versions
-# consider running `flutter pub upgrade --major-versions`. Alternatively,
-# dependencies can be manually updated by changing the version numbers below to
-# the latest version available on pub.dev. To see which dependencies have newer
-# versions available, run `flutter pub outdated`.
 dependencies:
   flutter:
     sdk: flutter
@@ -54,8 +48,8 @@ dev_dependencies:
 
 # FIXME: Remove this dependency override.
 dependency_overrides:
-  eventsource:
-    git: https://github.com/eseidel/dart-eventsource.git
+  # This should just always be a path dependency, but we would need to update
+  # the way docker files pull the shorebird packages for that to work.
   shorebird:
     # path: ../shorebird/packages/shorebird
     git:
