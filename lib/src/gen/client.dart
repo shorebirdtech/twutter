@@ -107,16 +107,6 @@ class Client {
     var result = AuthResponse.fromJson(resultJson);
     return LoginResult.success(result);
   }
-
-  Future<LoginResult> signUp(SignUp signUp) async {
-    var response = await post('signup', signUp.toJson());
-    if (response.statusCode != HttpStatus.ok) {
-      return LoginResult.failure(response.reasonPhrase!);
-    }
-    var resultJson = jsonDecode(response.body);
-    var result = AuthResponse.fromJson(resultJson);
-    return LoginResult.success(result);
-  }
 }
 
 // Modeled on https://gist.github.com/HansMuller/29b03fc5e2285957ad7b0d6a58faac35
@@ -205,14 +195,6 @@ class Actions {
 
   Future<LoginResult> login(AuthRequest credentials) async {
     var result = await client.login(credentials);
-    if (result.success) {
-      client.authAsUser(result.auth!);
-    }
-    return result;
-  }
-
-  Future<LoginResult> signUp(SignUp signUp) async {
-    var result = await client.signUp(signUp);
     if (result.success) {
       client.authAsUser(result.auth!);
     }

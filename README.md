@@ -25,6 +25,8 @@ built on Shorebird could look like.
 - /home and other routes don't actually check for login.
 - Session is not persisted locally.
 - Sessions on the server are fake (and not persisted).
+- Possible to create duplicate users.
+- Timezones are not handled properly (server time should be utc and authoratative).
 
 # Questions?
 - Can we delete the backend directory?

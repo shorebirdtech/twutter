@@ -7,7 +7,7 @@ import 'package:twutter/src/backend/model.dart';
 import 'package:twutter/src/gen/handlers.dart';
 
 void main() async {
-  await DataStore.instance.init();
+  await DataStore.initSingleton();
 
   var handlers = <ShorebirdHandler>[
     FlapHandler(FlapEndpoint()),

@@ -122,36 +122,19 @@ class UserEndpoint extends Endpoint {
 }
 
 class AuthEndpoint extends Endpoint {
-  Future<AuthResponse> signUp(RequestContext context, SignUp signUp) async {
-    // Check if the username is available.
-    var db = DataStore.of(context);
-    var user = await db.userByUsername(signUp.username);
-    Exception('Username already exists');
-    // Create the user.
-    user = await db.createUser(User.fromSignUp(signUp));
-    // Create the session.
-    // Return the session.
-    return AuthResponse(
-      sessionId: '1',
-      user: user,
-    );
-  }
-
   Future<AuthResponse> login(
       RequestContext context, AuthRequest request) async {
     // Get the user from the request.
     // Validate the user.
     // Create a session.
     // Set the session cookie.
-    var success = await DataStore.of(context).matchCredentials(
-        username: request.username, password: request.password);
-    if (!success) {
-      throw Exception("Invalid credentials");
-    }
     var user = await DataStore.of(context).userByUsername(request.username);
+    if (user == null) {
+      throw Exception("User not found");
+    }
     return AuthResponse(
       sessionId: '1',
-      user: user!,
+      user: user,
     );
   }
 }

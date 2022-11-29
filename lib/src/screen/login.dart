@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 
 import '../gen/client.dart';
@@ -12,10 +14,6 @@ class LoginDialog extends StatefulWidget {
 }
 
 class _LoginDialogState extends State<LoginDialog> {
-  final _formKey = GlobalKey<FormState>();
-
-  late String username;
-  late String password;
   String? failureMessage;
 
   void closeLoginWindow() {
@@ -24,11 +22,12 @@ class _LoginDialogState extends State<LoginDialog> {
     Navigator.of(context).pushReplacementNamed("/home");
   }
 
-  void login() async {
+  void loginAs(String name) async {
     var client = Client.of(context);
-    var credentials = AuthRequest(username: username, password: password);
+    var credentials = AuthRequest(username: name);
     var result = await client.actions.login(credentials);
     if (result.success) {
+      unawaited(client.actions.refreshTimeline());
       closeLoginWindow();
     } else {
       // if failed, show error message, offer to create account?
@@ -40,6 +39,8 @@ class _LoginDialogState extends State<LoginDialog> {
 
   @override
   Widget build(BuildContext context) {
+    var knownUsers = ['@dash', '@golddash', '@shorebird', '@flutterdev'];
+
     return Scaffold(
       appBar: AppBar(
         toolbarHeight: LayoutConfig.appBarHeight,
@@ -52,61 +53,18 @@ class _LoginDialogState extends State<LoginDialog> {
         ],
         centerTitle: true,
       ),
-      body: Form(
-        key: _formKey,
-        child: Column(children: [
-          const Text("Username:"),
-          TextFormField(
-            decoration: const InputDecoration(hintText: "e.g. jack"),
-            validator: (String? value) {
-              if (value != null && value.trim().isEmpty) {
-                return 'Username is required';
-              }
-              return null;
-            },
-            onSaved: (String? value) {
-              setState(() {
-                username = value!;
-              });
-            },
-          ),
-          const Text("Password:"),
-          TextFormField(
-            obscureText: true,
-            enableSuggestions: false,
-            autocorrect: false,
-            validator: (String? value) {
-              if (value != null && value.trim().isEmpty) {
-                return 'Password is required';
-              }
-              return null;
-            },
-            onSaved: (String? value) {
-              setState(() {
-                password = value!;
-              });
-            },
-          ),
-          ElevatedButton(
-            onPressed: () {
-              // Validate returns true if the form is valid, or false
-              // otherwise.
-              var state = _formKey.currentState!;
-              if (state.validate()) {
-                state.save();
-                login();
-              }
-            },
-            child: const Text('Submit'),
-          ),
+      body: Column(
+        children: [
           if (failureMessage != null) Text(failureMessage!),
-          const Divider(),
-          const Text("New to Twutter?"),
-          ElevatedButton(
-            onPressed: () => Navigator.of(context).pushNamed("/signup"),
-            child: const Text("Sign up"),
-          ),
-        ]),
+          Wrap(children: [
+            for (var user in knownUsers)
+              ElevatedButton(
+                onPressed: () => loginAs(user),
+                child: Text(user),
+              ),
+          ]),
+          const Text("Click on a demo user above to login.")
+        ],
       ),
     );
   }

@@ -5,7 +5,6 @@ import 'gen/client.dart';
 import 'screen/compose.dart';
 import 'screen/home.dart';
 import 'screen/login.dart';
-import 'screen/signup.dart';
 
 class TwutterApp extends StatelessWidget {
   const TwutterApp({super.key});
@@ -37,7 +36,6 @@ class TwutterApp extends StatelessWidget {
           '/login': (context) => const LoginDialog(),
           '/home': (context) => const Home(),
           '/compose': (context) => const ComposeDialog(),
-          '/signup': (context) => const SignUpDialog(),
         },
       ),
     );

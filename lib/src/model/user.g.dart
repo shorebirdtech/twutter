@@ -20,13 +20,11 @@ Map<String, dynamic> _$AuthEntryToJson(AuthEntry instance) => <String, dynamic>{
 
 AuthRequest _$AuthRequestFromJson(Map<String, dynamic> json) => AuthRequest(
       username: json['username'] as String,
-      password: json['password'] as String,
     );
 
 Map<String, dynamic> _$AuthRequestToJson(AuthRequest instance) =>
     <String, dynamic>{
       'username': instance.username,
-      'password': instance.password,
     };
 
 AuthResponse _$AuthResponseFromJson(Map<String, dynamic> json) => AuthResponse(

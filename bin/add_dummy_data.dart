@@ -125,8 +125,9 @@ class DummyStoreBuilder {
 }
 
 void main() async {
+  print("Adding dummy data (takes several seconds against the real db)...");
+  await DataStore.initSingleton();
   var db = DataStore.instance;
-  await db.init();
   var store = StoreAdaptor(db);
   var builder = DummyStoreBuilder(store);
   await builder.execute();

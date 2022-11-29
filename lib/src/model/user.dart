@@ -20,8 +20,7 @@ class AuthEntry {
 @JsonSerializable()
 class AuthRequest {
   final String username;
-  final String password;
-  AuthRequest({required this.username, required this.password});
+  AuthRequest({required this.username});
 
   factory AuthRequest.fromJson(Map<String, dynamic> json) =>
       _$AuthRequestFromJson(json);

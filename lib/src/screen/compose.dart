@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:twutter/src/model/flap.dart';
 
@@ -68,6 +70,7 @@ class _ComposeDialogState extends State<ComposeDialog> {
     while (true) {
       try {
         await client.actions.publish(draft);
+        unawaited(client.actions.refreshTimeline());
         closeComposeWindow();
         break;
       } catch (e) {

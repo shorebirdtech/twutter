@@ -11,16 +11,24 @@ class DataStore {
 
   DataStore();
 
-  static final DataStore _singleton = DataStore();
-  static DataStore get instance => _singleton;
+  static DataStore? _singleton;
+  static DataStore get instance => _singleton!;
 
-  factory DataStore.of(AuthenticatedContext context) => _singleton;
+  factory DataStore.of(AuthenticatedContext context) => _singleton!;
+
+  static Future<void> initSingleton() async {
+    _singleton = DataStore();
+    await _singleton!.init();
+  }
 
   Future<void> init() async {
     // Specified in digial ocean's environment settings:
     // https://docs.digitalocean.com/products/app-platform/how-to/use-environment-variables/#define-build-time-environment-variables
-    final mongoUri = Platform.environment['DATABASE_URL']!;
-    db = await Db.create(mongoUri);
+    final mongoUrl = Platform.environment['DATABASE_URL'];
+    if (mongoUrl == null) {
+      throw Exception('DATABASE_URL environment variable is not set.');
+    }
+    db = await Db.create(mongoUrl);
     await db.open();
   }
 
