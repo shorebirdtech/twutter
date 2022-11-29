@@ -1,4 +1,3 @@
-import 'dart:convert';
 import 'dart:io';
 
 import 'package:shorebird/datastore.dart';
@@ -17,9 +16,9 @@ class DataStore {
   factory DataStore.of(AuthenticatedContext context) => _singleton;
 
   Future<void> init() async {
-    var env = File('env.json');
-    var envJson = jsonDecode(await env.readAsString());
-    var mongoUri = envJson['MONGO_URI'];
+    // Specified in digial ocean's environment settings:
+    // https://docs.digitalocean.com/products/app-platform/how-to/use-environment-variables/#define-build-time-environment-variables
+    final mongoUri = Platform.environment['DATABASE_URL']!;
     db = await Db.create(mongoUri);
     await db.open();
   }
