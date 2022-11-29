@@ -1,14 +1,15 @@
 # twutter
 
-Isn't everyone writing their own Twitter?
-
-## About
 Using Twitter as an example to demonstrate what a front-to-back app
 built on Shorebird could look like.
 
-## Blockers to posting to Discord
-- Sign-in of some form
-- Timeline refresh on login
+An instance is live at: https://shimmer-c3juc.ondigitalocean.app/
+
+# Notes
+
+## Easy cleanup
+- Add color to user profile
+- center views on large screens.
 
 ## Missing features
 - Separate per-user timelines.
@@ -20,6 +21,7 @@ built on Shorebird could look like.
 - Likes
 - Reflaps
 - Search
+- No way to migrate the database when editing model classes.
 
 ## Bugs
 - /home and other routes don't actually check for login.
@@ -28,7 +30,7 @@ built on Shorebird could look like.
 - Possible to create duplicate users.
 - Timezones are not handled properly (server time should be utc and authoratative).
 
-# Questions?
+## Questions?
 - Can we delete the backend directory?
 - Can the compiler just decide what parts go where and find the async boundary
   to cut at?
@@ -36,7 +38,7 @@ built on Shorebird could look like.
 - Authorization should be expressed in the type system, e.g. AuthorizedContext.
 
 
-# Pain
+## Pain
 * When you forget return Response.ok() from handler, you get:
 Error thrown by handler.
 type 'Null' is not a subtype of type 'FutureOr<Response>'
