@@ -11,6 +11,13 @@ import '../model/user.dart';
 
 part 'handlers.g.dart';
 
+var allHandlers = <ShorebirdHandler>[
+  FlapHandler(FlapEndpoint()),
+  AuthHandler(AuthEndpoint()),
+  TimelineHandler(TimelineEndpoint()),
+  UserHandler(UserEndpoint()),
+];
+
 class FlapHandler extends ShorebirdHandler {
   final FlapEndpoint endpoint;
 
