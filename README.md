@@ -6,39 +6,25 @@ Isn't everyone writing their own Twitter?
 Using Twitter as an example to demonstrate what a front-to-back app
 built on Shorebird could look like.
 
-## Burndown List
-- Split out data layer to persist across pushes.
-- Publish to web via github hook?
-- Figure out images.
-- Add separate type for DatabaseId for Flaps, Users, etc.
-- Add pull-to-refresh to timeline page
-- Add notifications
-- Add Profile pages
-- Make it possible to follow/unfollow.
-- Add Likes
-- Add Reflaps
-- Add Search
+## Blockers to posting to Discord
+- Sign-in of some form
+- Timeline refresh on login
+
+## Missing features
+- Separate per-user timelines.
+- Profile pages
+- Ability to follow/unfollow.
+- Image support (profile images, media in flaps, etc).
+- Pull-to-refresh to timeline page
+- Notifications
+- Likes
+- Reflaps
+- Search
 
 ## Bugs
 - /home and other routes don't actually check for login.
 - Session is not persisted locally.
 - Sessions on the server are fake (and not persisted).
-
-# Arch
-Client holds open an EventSource connection to the server to receive
-notification of timeline, message or notifciation updates.
-Then when the user takes action, the client sends a request to the
-server to pull the latest timeline, message or notification data.
-Maybe messages are sent down in this open connection already?
-
-App should act as though everything is local, with many requests being
-async and failable.  The server should be able to run on the phone or in
-the cloud and it not matter.
-
-
-Views reach through to model which caches or requests from client as necessary.
-
-
 
 # Questions?
 - Can we delete the backend directory?
