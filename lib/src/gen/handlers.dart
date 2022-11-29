@@ -1,8 +1,7 @@
 import 'dart:convert';
 
 import 'package:json_annotation/json_annotation.dart';
-import 'package:shelf/shelf.dart';
-import 'package:shelf_router/shelf_router.dart';
+import 'package:shelf/shelf.dart' as shelf;
 import 'package:shorebird/datastore.dart';
 import 'package:shorebird/shorebird.dart';
 import 'package:twutter/src/backend/endpoint.dart';
@@ -18,13 +17,13 @@ class FlapHandler extends ShorebirdHandler {
   FlapHandler(this.endpoint);
 
   @override
-  void addRoutes(Router router) {
-    router.post('/flap/post', (Request request) async {
+  void collectRoutes(Router router) {
+    router.addRoute('/flap/post', (shelf.Request request) async {
       // verify session
       var draftJson = jsonDecode(await request.readAsString());
       var draft = DraftFlap.fromJson(draftJson);
       await endpoint.post(AuthenticatedContext(), draft);
-      return Response.ok('OK');
+      return shelf.Response.ok('OK');
     });
   }
 }
@@ -48,14 +47,15 @@ class TimelineHandler extends ShorebirdHandler {
   TimelineHandler(this.endpoint);
 
   @override
-  void addRoutes(Router router) {
-    router.post('/timeline/latestFlapsSince', (Request request) async {
+  void collectRoutes(Router router) {
+    router.addRoute('/timeline/latestFlapsSince',
+        (shelf.Request request) async {
       // verify session
       var argsJson = jsonDecode(await request.readAsString());
       var args = LatestFlapsSinceArgs.fromJson(argsJson);
       var flaps = await endpoint.latestFlapsSince(AuthenticatedContext(),
           sinceFlapId: args.sinceFlapId, maxCount: args.maxCount);
-      return Response.ok(jsonEncode(flaps));
+      return shelf.Response.ok(jsonEncode(flaps));
     });
   }
 }
@@ -66,24 +66,24 @@ class UserHandler extends ShorebirdHandler {
   UserHandler(this.endpoint);
 
   @override
-  void addRoutes(Router router) {
-    router.post('/user/userById', (Request request) async {
+  void collectRoutes(Router router) {
+    router.addRoute('/user/userById', (shelf.Request request) async {
       // verify session
       var argsJson = jsonDecode(await request.readAsString());
       var user = await endpoint.userById(
         AuthenticatedContext(),
         const ObjectIdConverter().fromJson(argsJson['userId']),
       );
-      return Response.ok(jsonEncode(user));
+      return shelf.Response.ok(jsonEncode(user));
     });
-    router.post('/user/userByUsername', (Request request) async {
+    router.addRoute('/user/userByUsername', (shelf.Request request) async {
       // verify session
       var argsJson = jsonDecode(await request.readAsString());
       var user = await endpoint.userByUsername(
         AuthenticatedContext(),
         argsJson['username'],
       );
-      return Response.ok(jsonEncode(user));
+      return shelf.Response.ok(jsonEncode(user));
     });
   }
 }
@@ -94,15 +94,15 @@ class AuthHandler extends ShorebirdHandler {
   AuthHandler(this.endpoint);
 
   @override
-  void addRoutes(Router router) {
-    router.post('/login', (Request request) async {
+  void collectRoutes(Router router) {
+    router.addRoute('/login', (shelf.Request request) async {
       var credentialsJson = jsonDecode(await request.readAsString());
       var credentials = AuthRequest.fromJson(credentialsJson);
       try {
         var result = await endpoint.login(RequestContext(), credentials);
-        return Response.ok(jsonEncode(result.toJson()));
+        return shelf.Response.ok(jsonEncode(result.toJson()));
       } catch (e) {
-        return Response(500, body: "Invalid credentials.");
+        return shelf.Response(500, body: "Invalid credentials.");
       }
     });
   }

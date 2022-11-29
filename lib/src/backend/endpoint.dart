@@ -49,22 +49,6 @@ extension LastN<T> on List<T> {
 // That cache should be generated/updated when a user edits their follows.
 // For now we're using a single global timeline cache.
 class TimelineEndpoint extends Endpoint {
-  // Future<List<Flap>> getTimeline(RequestContext context,
-  //     {String? sinceFlapId, int count = 30}) async {
-  //   var session = SessionController.of(context);
-  //   // This is the wrong API
-  //   var timeline = await dataStore.timelineForUser(session.userId);
-  //   List<Flap> flaps = timeline.recentFollowedFlaps;
-  //   if (sinceFlapId != null) {
-  //     var lastSeenIndex =
-  //         flaps.indexWhere((element) => element.id == sinceFlapId);
-  //     return flaps.sublist(lastSeenIndex + 1, lastSeenIndex + count);
-  //   }
-  //   // If there is a flap id, look it up.
-  //   // If there is no flap id, the latest N flaps.
-  //   return flaps.lastN(count);
-  // }
-
   Future<bool> haveFlapsSince(
       AuthenticatedContext context, ObjectId flapId) async {
     var flaps =
@@ -74,15 +58,12 @@ class TimelineEndpoint extends Endpoint {
 
   Future<List<Flap>> latestFlapsSince(AuthenticatedContext context,
       {required ObjectId? sinceFlapId, required int maxCount}) async {
-    // var session = SessionController.of(context);
-    // Load the last 100 flaps.
-    // Look for the flap id, if it's not present, assume we have newer
-    // and return the most recent maxCount.
-
     var flaps = await DataStore.of(context)
         .collection<Flap>()
         .find(where.sortBy('createdAt', descending: true).limit(maxCount))
         .toList();
+    // Look for sinceFlapId, if it's not present, assume we only have newer
+    // and return maxCount of the most recent Flaps.
     var lastSeenIndex =
         flaps.indexWhere((element) => element.id == sinceFlapId);
     if (lastSeenIndex == -1) {
@@ -91,16 +72,6 @@ class TimelineEndpoint extends Endpoint {
     return flaps.sublist(
         lastSeenIndex + 1, min(lastSeenIndex + maxCount, flaps.length));
   }
-
-  // List<Flap> flapsDirectlyAfter(
-  //     AuthenticatedContext context, String flapId, int maxCount) {
-  //   return <Flap>[];
-  // }
-
-  // List<Flap> flapsDirectlyBefore(
-  //     AuthenticatedContext context, String flapId, int maxCount) {
-  //   return <Flap>[];
-  // }
 }
 
 class UserEndpoint extends Endpoint {

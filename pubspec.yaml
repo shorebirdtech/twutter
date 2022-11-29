@@ -25,35 +25,33 @@ dependencies:
     sdk: flutter
   cupertino_icons: ^1.0.2
   shorebird:
-    # path: ../shorebird/packages/shorebird
     git:
       url: https://github.com/shorebirdtech/shorebird.git
       path: packages/shorebird
-  shorebird_flutter:
-    # path: ../shorebird/packages/shorebird_flutter
-    git:
-      url: https://github.com/shorebirdtech/shorebird.git
-      path: packages/shorebird_flutter
-  json_annotation: ^4.7.0
-  shelf: ^1.4.0
-  shelf_router: ^1.1.3
-  http: ^0.13.5
+  # shorebird_flutter:
+  #   git:
+  #     url: https://github.com/shorebirdtech/shorebird.git
+  #     path: packages/shorebird_flutter
   meta: ^1.8.0
+  # Remove these:
+  json_annotation: ^4.7.0
+  http: ^0.13.5
+  shelf: ^1.4.0
 
 dev_dependencies:
   flutter_lints: ^2.0.0
+  # Remove these:
   build_runner: ^2.3.2
   json_serializable: ^6.5.4
 
 # FIXME: Remove this dependency override.
-dependency_overrides:
-  # This should just always be a path dependency, but we would need to update
-  # the way docker files pull the shorebird packages for that to work.
-  shorebird:
-    # path: ../shorebird/packages/shorebird
-    git:
-      url: https://github.com/shorebirdtech/shorebird.git
-      path: packages/shorebird
+# shorebird should always be a path dependency, but we would need to update
+# the way docker files pull the shorebird packages for that to work.
+# dependency_overrides:
+#   shorebird:
+#     path: ../shorebird/packages/shorebird
+#   shorebird_flutter:
+#     path: ../shorebird/packages/shorebird_flutter
 
 flutter:
   uses-material-design: true
