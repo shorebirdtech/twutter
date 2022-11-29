@@ -6,18 +6,6 @@ part of 'user.dart';
 // JsonSerializableGenerator
 // **************************************************************************
 
-AuthEntry _$AuthEntryFromJson(Map<String, dynamic> json) => AuthEntry(
-      id: const ObjectIdConverter().fromJson(json['id'] as String),
-      username: json['username'] as String,
-      password: json['password'] as String,
-    );
-
-Map<String, dynamic> _$AuthEntryToJson(AuthEntry instance) => <String, dynamic>{
-      'id': const ObjectIdConverter().toJson(instance.id),
-      'username': instance.username,
-      'password': instance.password,
-    };
-
 AuthRequest _$AuthRequestFromJson(Map<String, dynamic> json) => AuthRequest(
       username: json['username'] as String,
     );

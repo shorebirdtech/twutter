@@ -56,7 +56,7 @@ class DataStore {
 
   Future<void> updateFlap(ObjectId flapId, Function(Flap flap) callback) async {
     var store = db.collection('flaps');
-    var flapJson = await store.findOne(where.eq('_id', flapId));
+    var flapJson = await store.findOne(where.id(flapId));
     if (flapJson == null) {
       throw Exception('Flap not found: $flapId');
     }
@@ -81,7 +81,7 @@ class DataStore {
 
   Future<User> userById(ObjectId userId) async {
     var store = db.collection('users');
-    var userJson = await store.findOne(where.eq('_id', userId));
+    var userJson = await store.findOne(where.id(userId));
     if (userJson == null) {
       throw Exception('User not found: $userId');
     }
@@ -103,14 +103,6 @@ class DataStore {
     // insert modifies the dbJson to include _id.
     await store.insert(dbJson);
     return User.fromDbJson(dbJson);
-  }
-
-  Future<bool> matchCredentials(
-      {required String username, required String password}) async {
-    var store = db.collection('credentials');
-    var dbJson = await store.findOne(
-        where.eq('username', username).and(where.eq('password', password)));
-    return dbJson != null;
   }
 
   // // This should just return a lazy object rather than filling it.

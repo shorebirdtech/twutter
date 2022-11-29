@@ -3,20 +3,6 @@ import 'package:shorebird/datastore.dart';
 
 part 'user.g.dart';
 
-// Stored separately from User so passwords aren't passed around.
-@JsonSerializable()
-@ObjectIdConverter()
-class AuthEntry {
-  final ObjectId id;
-  final String username;
-  final String password;
-  AuthEntry({required this.id, required this.username, required this.password});
-
-  factory AuthEntry.fromJson(Map<String, dynamic> json) =>
-      _$AuthEntryFromJson(json);
-  Map<String, dynamic> toJson() => _$AuthEntryToJson(this);
-}
-
 @JsonSerializable()
 class AuthRequest {
   final String username;
@@ -56,7 +42,6 @@ class SignUp {
 
 @JsonSerializable()
 @ObjectIdConverter()
-// Split user (auth) vs. profile (public) data?
 class User {
   final ObjectId id;
   // Mutable with a long time scale component.
@@ -67,10 +52,6 @@ class User {
 
   // Good enough hack for now. Remove when we have profile pictures.
   String get initials => displayName.split(' ').map((s) => s[0]).join();
-
-  // FIXME: Remove: Mutable and has a time component.
-  // final List<String> following;
-  // final List<String> followers;
 
   const User({
     required this.id,
