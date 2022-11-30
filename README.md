@@ -50,6 +50,7 @@ Currently the only db is mongodb running remotely.
 - Sessions on the server are fake (and not persisted).
 - Possible to create duplicate users.
 - Timezones are not handled properly (server time should be utc and authoratative).
+- Can't run more than one shorebird app on your machine at once (due to port conflicts).
 
 ## Questions?
 - Can we delete the backend directory?
