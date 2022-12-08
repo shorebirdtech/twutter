@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:twutter/src/view/config.dart';
 
-import '../gen/client.dart';
+import '../globals.dart';
 import 'flap.dart';
 
 // Is this just AsyncSnapshot<List<Flap>>?
@@ -46,11 +46,11 @@ class Timeline extends StatelessWidget {
     // And status of current fetch request?
     // CachedFlap would have the User always associated?
     // Where is the scroll position cached?
-    var client = Client.of(context);
+    var globals = Globals.of(context);
     return SizedBox(
       width: LayoutConfig.timelineWidth,
       child: ValueListenableBuilder<List<CachedFlap>>(
-        valueListenable: client.cachedFlaps,
+        valueListenable: globals.cachedFlaps,
         builder: (context, cachedFlaps, child) {
           if (cachedFlaps.isEmpty) {
             return const _EmptyTimeline();

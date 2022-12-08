@@ -1,7 +1,7 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
-import 'gen/client.dart';
+import 'globals.dart';
 import 'screen/compose.dart';
 import 'screen/home.dart';
 import 'screen/login.dart';
@@ -19,8 +19,8 @@ class TwutterApp extends StatelessWidget {
       // e.g. 'wss://shimmer-c3juc.ondigitalocean.app/api'
     }
 
-    return ClientBinding(
-      initialClient: Client(baseUrl: url),
+    return GlobalsBinding(
+      initialGlobals: Globals(baseUrl: url),
       child: MaterialApp(
         title: 'Twutter',
         theme: ThemeData.dark().copyWith(

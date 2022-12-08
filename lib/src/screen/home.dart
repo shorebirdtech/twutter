@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:twutter/src/view/avatar.dart';
 import 'package:twutter/src/view/config.dart';
 
-import '../gen/client.dart';
+import '../globals.dart';
 import '../model/user.dart';
 import '../view/timeline.dart';
 
@@ -118,7 +118,7 @@ class _HomeState extends State<Home> {
 
   @override
   Widget build(BuildContext context) {
-    var client = Client.of(context);
+    var globals = Globals.of(context);
 
     final List<Screen> screens = <Screen>[
       Screen(
@@ -133,7 +133,7 @@ class _HomeState extends State<Home> {
           // ),
           navigationIcon: const Icon(Icons.home),
           action: ElevatedButton(
-            onPressed: () => client.actions.refreshTimeline(),
+            onPressed: () => globals.actions.refreshTimeline(),
             child: const Text("Refresh"),
           )),
       // const Screen(
@@ -168,7 +168,7 @@ class _HomeState extends State<Home> {
           child: ValueListenableBuilder<User?>(
             builder: (BuildContext context, User? user, Widget? child) =>
                 AvatarView(user: user ?? User.empty()),
-            valueListenable: client.user,
+            valueListenable: globals.user,
           ),
         ), // Decide what logged out behavior is?
         title: selectedScreen.appBarTitle,

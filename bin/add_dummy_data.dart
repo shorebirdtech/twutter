@@ -1,6 +1,6 @@
 import 'package:shorebird/datastore.dart';
+import 'package:twutter/src/gen/storable.dart';
 import 'package:twutter/src/model/flap.dart';
-import 'package:twutter/src/model/model.dart';
 import 'package:twutter/src/model/user.dart';
 
 DateTime _ago({int days = 0, int hours = 0, int minutes = 0}) => DateTime.now()

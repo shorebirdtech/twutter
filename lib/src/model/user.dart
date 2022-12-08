@@ -1,8 +1,10 @@
 import 'package:json_annotation/json_annotation.dart';
+import 'package:shorebird/annotations.dart';
 import 'package:shorebird/datastore.dart';
 
 part 'user.g.dart';
 
+@Transportable()
 @JsonSerializable()
 class AuthRequest {
   final String username;
@@ -13,6 +15,7 @@ class AuthRequest {
   Map<String, dynamic> toJson() => _$AuthRequestToJson(this);
 }
 
+@Transportable()
 @JsonSerializable()
 class AuthResponse {
   final String sessionId;
@@ -25,6 +28,7 @@ class AuthResponse {
   Map<String, dynamic> toJson() => _$AuthResponseToJson(this);
 }
 
+@Transportable()
 @JsonSerializable()
 class SignUp {
   final String username;
@@ -40,6 +44,8 @@ class SignUp {
   Map<String, dynamic> toJson() => _$SignUpToJson(this);
 }
 
+@Transportable()
+@Storable()
 @JsonSerializable()
 @ObjectIdConverter()
 class User {
@@ -69,11 +75,6 @@ class User {
         verified = false;
 
   User.empty() : this(id: ObjectId(), displayName: '', username: '');
-
-  factory User.fromDbJson(Map<String, dynamic> json) =>
-      User.fromJson(DbJsonConverter.fromDbJson(json));
-
-  Map<String, dynamic> toDbJson() => DbJsonConverter.toDbJson(toJson());
 
   factory User.fromJson(Map<String, dynamic> json) => _$UserFromJson(json);
   Map<String, dynamic> toJson() => _$UserToJson(this);

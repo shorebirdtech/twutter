@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:twutter/src/gen/client.dart';
 import 'package:twutter/src/view/avatar.dart';
 
+import '../globals.dart';
 import 'config.dart';
 import 'theme.dart';
 import 'user.dart';

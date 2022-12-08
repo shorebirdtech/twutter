@@ -1,5 +1,6 @@
 import 'package:json_annotation/json_annotation.dart';
 import 'package:meta/meta.dart';
+import 'package:shorebird/annotations.dart';
 import 'package:shorebird/datastore.dart';
 
 part 'flap.g.dart';
@@ -16,6 +17,7 @@ part 'flap.g.dart';
 
 // Can this just be combined into Flap?
 // e.g. annotate which things with Flap?
+@Transportable()
 @JsonSerializable()
 @ObjectIdConverter()
 class DraftFlap {
@@ -63,6 +65,8 @@ class DraftFlap {
   Map<String, dynamic> toJson() => _$DraftFlapToJson(this);
 }
 
+@Transportable()
+@Storable()
 @JsonSerializable()
 @ObjectIdConverter()
 @immutable
@@ -110,11 +114,6 @@ class Flap {
         previousFlapId = draft.previousFlapId,
         originalFlapId = draft.originalFlapId,
         isPromoted = draft.isPromoted;
-
-  factory Flap.fromDbJson(Map<String, dynamic> json) =>
-      Flap.fromJson(DbJsonConverter.fromDbJson(json));
-
-  Map<String, dynamic> toDbJson() => DbJsonConverter.toDbJson(toJson());
 
   factory Flap.fromJson(Map<String, dynamic> json) => _$FlapFromJson(json);
 

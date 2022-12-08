@@ -2,7 +2,7 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 
-import '../gen/client.dart';
+import '../globals.dart';
 import '../model/user.dart';
 import '../view/config.dart';
 
@@ -23,16 +23,16 @@ class _LoginDialogState extends State<LoginDialog> {
   }
 
   void loginAs(String name) async {
-    var client = Client.of(context);
+    var actions = Globals.of(context).actions;
     var credentials = AuthRequest(username: name);
-    var result = await client.actions.login(credentials);
-    if (result.success) {
-      unawaited(client.actions.refreshTimeline());
+    try {
+      await actions.login(credentials);
+      unawaited(actions.refreshTimeline());
       closeLoginWindow();
-    } else {
+    } catch (e) {
       // if failed, show error message, offer to create account?
       setState(() {
-        failureMessage = result.error;
+        failureMessage = e.toString();
       });
     }
   }

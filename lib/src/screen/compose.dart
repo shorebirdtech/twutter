@@ -3,7 +3,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:twutter/src/model/flap.dart';
 
-import '../gen/client.dart';
+import '../globals.dart';
 import '../view/button.dart';
 import '../view/config.dart';
 
@@ -57,9 +57,9 @@ class _ComposeDialogState extends State<ComposeDialog> {
   }
 
   void post() async {
-    var client = Client.of(context);
+    var globals = Globals.of(context);
     var draft = DraftFlap.compose(
-      authorId: client.user.value!.id,
+      authorId: globals.user.value!.id,
       content: textController.text,
     );
     // Immediately disable the publish button?
@@ -69,8 +69,8 @@ class _ComposeDialogState extends State<ComposeDialog> {
 
     while (true) {
       try {
-        await client.actions.publish(draft);
-        unawaited(client.actions.refreshTimeline());
+        await globals.actions.publish(draft);
+        unawaited(globals.actions.refreshTimeline());
         closeComposeWindow();
         break;
       } catch (e) {
