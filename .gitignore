@@ -1,7 +1,7 @@
 # See https://www.dartlang.org/guides/libraries/private-files
 
 # Twutter specific
-sample.db
+local_datastore.json
 env.json
 
 # Files and directories created by pub
