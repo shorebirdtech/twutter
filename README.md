@@ -1,9 +1,13 @@
 # twutter
 
-Using Twitter as an example to demonstrate what a front-to-back app
-built on Shorebird could look like.
+This repository is archived.
 
-An instance is live at: https://shimmer-c3juc.ondigitalocean.app/
+This was an early exploration into what a front-to-back Dart app could look like
+and thus what I should build for Shorebird.
+
+After speaking with more customers we decided to pursue a code-push product
+first before possibly later returning to serverless Dart.  If you are interested
+in this project, please hop on our Discord and let us know!
 
 ## Running Locally
 
